@@ -3,7 +3,7 @@ import ExcelJS from 'exceljs';
 const importProducts = () => {
   const workbook = new ExcelJS.Workbook();
   workbook.xlsx
-    .readFile('../files/form3.xlsx')
+    .readFile('../files/input/form.xlsx')
     .then(function () {
       const worksheet = workbook.getWorksheet(1);
 
@@ -42,3 +42,5 @@ const importProducts = () => {
       console.error('Error reading the Excel file:', error);
     });
 };
+
+export default importProducts;
