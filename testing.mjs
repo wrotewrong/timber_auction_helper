@@ -5,23 +5,44 @@ import estimateWinner from './utils/estimateWinner.mjs';
 const products = [
   {
     productNumber: 1,
-    forestDistrict: 'Brzeziny',
+    forestDistrict: 'Kutno',
+    unit: 'random lctwo',
+    woodNumber: '123123123',
+    species: 'DB',
+    length: 8.5,
+    diameter: 45,
     volume: 14.76,
-    startingPrice: 5000.62,
+    class: 'WA1',
+    priceSingle: 5000.62,
+    priceTotal: 45000.62,
     maxBid: { company: undefined, offer: 0 },
   },
   {
     productNumber: 2,
-    forestDistrict: 'Bełchatów',
-    volume: 11.76,
-    startingPrice: 2783.62,
+    forestDistrict: 'Brzeziny',
+    unit: 'random lctwo',
+    woodNumber: '345345345',
+    species: 'DB',
+    length: 5.5,
+    diameter: 35,
+    volume: 9.76,
+    class: 'WA1',
+    priceSingle: 2000.62,
+    priceTotal: 25000.62,
     maxBid: { company: undefined, offer: 0 },
   },
   {
     productNumber: 3,
-    forestDistrict: 'Kutno',
-    volume: 12.0,
-    startingPrice: 3333.62,
+    forestDistrict: 'Gostynin',
+    unit: 'random lctwo',
+    woodNumber: '234234234',
+    species: 'BK',
+    length: 2.5,
+    diameter: 35,
+    volume: 4.76,
+    class: 'WA0',
+    priceSingle: 3000.62,
+    priceTotal: 35000.62,
     maxBid: { company: undefined, offer: 0 },
   },
 ];
@@ -64,8 +85,18 @@ const offers = [
 
 const contracts = [];
 
-// for (let product of products) {
+importProducts()
+  .then((products) => {
+    console.log(products);
+    for (let product of products) {
+      createDoc('catalog', 'inputKatalog', product);
+    }
+    estimateWinner(products, offers, companies);
+  })
+  .catch((error) => {
+    console.error('Error importing products:', error);
+  });
+
+// for (let product of prods) {
 //   createDoc('contract', product);
 // }
-
-estimateWinner(products, offers, companies);

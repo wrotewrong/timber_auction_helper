@@ -2,8 +2,8 @@ import ExcelJS from 'exceljs';
 
 const importProducts = () => {
   const workbook = new ExcelJS.Workbook();
-  workbook.xlsx
-    .readFile('../files/input/form.xlsx')
+  return workbook.xlsx
+    .readFile('./files/input/form.xlsx')
     .then(function () {
       const worksheet = workbook.getWorksheet(1);
 
@@ -25,16 +25,17 @@ const importProducts = () => {
       //   console.log(emptyProduct);
 
       const allProducts = [];
-      for (let element of allData) {
+      for (let element of allData.slice(1)) {
         const filledProduct = {};
         let i = 0;
         for (let attribute in emptyProduct) {
           filledProduct[attribute] = element[i];
           i++;
         }
+        filledProduct.maxBid = { company: undefined, offer: 0 };
         allProducts.push(filledProduct);
       }
-      console.log(allProducts);
+      // console.log(allProducts);
 
       return allProducts;
     })

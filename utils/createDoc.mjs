@@ -8,9 +8,9 @@ import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const createDoc = (docType, inputData) => {
+const createDoc = (docType, inputFileName, inputData) => {
   const content = fs.readFileSync(
-    path.resolve(__dirname, '../files/input/input.docx'),
+    path.resolve(__dirname, `../files/input/${inputFileName}.docx`),
     'binary'
   );
 
@@ -21,11 +21,33 @@ const createDoc = (docType, inputData) => {
     linebreaks: true,
   });
 
-  if ((docType = 'contract')) {
+  let filename = '';
+  if (docType === 'contract') {
     doc.render({
-      first_name: inputData.first_name,
-      last_name: inputData.last_name,
+      forestDistrict: 'Nadleśnictwo Brzeziny',
+      amount: inputData.masa,
+      price: inputData['cena m3'],
+      company: inputData.company,
     });
+
+    filename = `Umowa - Nadleśnictwo Brzeziny - ${
+      inputData.company
+    } - ${Date.now()};`;
+  } else if (docType === 'catalog') {
+    doc.render({
+      productNumber: inputData.productNumber,
+      forestDistrict: inputData.forestDistrict,
+      unit: inputData.unit,
+      species: inputData.species,
+      length: inputData.length,
+      diameter: inputData.diameter,
+      volume: inputData.volume,
+      class: inputData.class,
+      priceSingle: inputData.priceSingle,
+      priceTotal: inputData.priceTotal,
+    });
+
+    filename = `Katalog ŁADS - ${Date.now()};`;
   } else {
     return;
   }
@@ -35,8 +57,6 @@ const createDoc = (docType, inputData) => {
     compression: 'DEFLATE',
   });
 
-  const filename =
-    inputData.first_name + ' ' + inputData.last_name + ' ' + Date.now();
   fs.writeFileSync(
     path.resolve(__dirname, `../files/output/${filename}.docx`),
     buf
