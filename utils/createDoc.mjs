@@ -34,18 +34,7 @@ const createDoc = (docType, inputFileName, inputData) => {
       inputData.company
     } - ${Date.now()};`;
   } else if (docType === 'catalog') {
-    doc.render({
-      productNumber: inputData.productNumber,
-      forestDistrict: inputData.forestDistrict,
-      unit: inputData.unit,
-      species: inputData.species,
-      length: inputData.length,
-      diameter: inputData.diameter,
-      volume: inputData.volume,
-      class: inputData.class,
-      priceSingle: inputData.priceSingle,
-      priceTotal: inputData.priceTotal,
-    });
+    doc.render({ products: inputData });
 
     filename = `Katalog ŁADS - ${Date.now()};`;
   } else {
