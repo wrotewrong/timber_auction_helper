@@ -1,6 +1,7 @@
 import importExcelData from './utils/importExcelData.mjs';
 import createDoc from './utils/createDoc.mjs';
 import estimateWinner from './utils/estimateWinner.mjs';
+import prepareContracts from './utils/prepareContracts.mjs';
 
 // const products = [
 //   {
@@ -83,8 +84,6 @@ import estimateWinner from './utils/estimateWinner.mjs';
 //   { productNumber: 3, bidder: 'COMPANY B', bid: 4500 },
 // ];
 
-const contracts = [];
-
 const importedProducts = await importExcelData('products', 'productsData')
   .then((products) => {
     return products;
@@ -109,4 +108,14 @@ const importedOffers = await importExcelData('offers', 'offersData')
     console.error('Error importing offers:', error);
   });
 
-estimateWinner(importedProducts, importedOffers, importedCompanies);
+const [resolvedProducts, resolvedCompanies] = estimateWinner(
+  importedProducts,
+  importedOffers,
+  importedCompanies
+);
+
+const contracts = prepareContracts(resolvedProducts, resolvedCompanies);
+
+// console.log(resolvedProducts);
+// console.log(resolvedCompanies);
+console.log(contracts);

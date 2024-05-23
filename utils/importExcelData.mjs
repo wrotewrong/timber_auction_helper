@@ -18,12 +18,11 @@ const importExcelData = (dataType, inputFileName) => {
       // console.log(allData);
 
       const attributes = allData[0];
-      const emptyProduct = {};
+      const dataObject = {};
       for (let attribute of attributes) {
-        emptyProduct[attribute] = undefined;
+        dataObject[attribute] = undefined;
       }
-      // console.log(emptyProduct);
-      console.log(dataType);
+      // console.log(dataObject);
 
       const data = {};
       if (dataType === 'products') {
@@ -39,7 +38,7 @@ const importExcelData = (dataType, inputFileName) => {
       for (let element of allData.slice(1)) {
         const filledData = {};
         let i = 0;
-        for (let attribute in emptyProduct) {
+        for (let attribute in dataObject) {
           filledData[attribute] = element[i];
           i++;
         }

@@ -26,8 +26,9 @@ const estimateWinner = (products, offers, companies) => {
     }
   }
 
-  console.log(companies);
-  console.log(products);
+  // console.log(companies);
+  // console.log(products);
+  return [products, companies];
 };
 
 export default estimateWinner;
