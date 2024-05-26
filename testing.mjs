@@ -116,6 +116,10 @@ const [resolvedProducts, resolvedCompanies] = estimateWinner(
 
 const contracts = prepareContracts(resolvedProducts, resolvedCompanies);
 
+for (let contract of contracts) {
+  createDoc('contract', 'inputUmowa', contract);
+}
+
 // console.log(resolvedProducts);
 // console.log(resolvedCompanies);
 console.log(contracts);

@@ -1,4 +1,4 @@
-//build in node 18.20
+//build in node 18.20.2
 
 //contracts
 export const submissionStart = new Date('2024-11-20');

@@ -24,14 +24,29 @@ const createDoc = (docType, inputFileName, inputData) => {
   let filename = '';
   if (docType === 'contract') {
     doc.render({
-      forestDistrict: 'Nadleśnictwo Brzeziny',
-      amount: inputData.masa,
-      price: inputData['cena m3'],
-      company: inputData.company,
+      nazwaFirmy: inputData.buyer.name,
+      siedzibaFirmy: inputData.buyer.zipCode,
+      siedzibaSądu: inputData.buyer.courtZipCode,
+      numerKRS: inputData.buyer.krsNumber,
+      numerNIP: inputData.buyer.nip,
+      numerREGON: inputData.buyer.regonNumber,
+      numerBDO: inputData.buyer.bdoNumber,
+      osobaReprezentującaNR1: inputData.buyer.firstRepresentative,
+      osobaReprezentującaNR2: inputData.buyer.secondRepresentative,
+      osobaFizycznaAdres: inputData.buyer.homeZipCode,
+      osobaFizyczna: inputData.buyer.isNaturalPerson,
+      osobaPrawna: inputData.buyer.isLegalperson,
+      dzieńRozpoczęcia: inputData.dates.submissionStart,
+      dzieńZakończenia: inputData.dates.submissionEnd,
+      ilośćCałkowita: inputData.timber.totalVolume,
+      wartośćCałkowita: inputData.timber.totalPrice,
+      terminOdbioru: inputData.dates.receiptOfProducts,
+      terminSprzedażyOd: inputData.dates.salesStart,
+      terminSprzedażyDo: inputData.dates.salesEnd,
     });
 
-    filename = `Umowa - Nadleśnictwo Brzeziny - ${
-      inputData.company
+    filename = `Umowa ŁADS - Nadleśnictwo Brzeziny - ${
+      inputData.buyer.nip
     } - ${Date.now()};`;
   } else if (docType === 'catalog') {
     doc.render({ products: inputData });
