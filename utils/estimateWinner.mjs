@@ -6,7 +6,9 @@ const estimateWinner = (products, offers, companies) => {
         offer.bid > product.maxBid.offer
       ) {
         product.maxBid.offer = offer.bid;
+        product.maxBid.nip = offer.nip;
         product.maxBid.company = offer.bidder;
+        product.finalTotalPrice = product.volume * offer.bid;
       }
     }
   }

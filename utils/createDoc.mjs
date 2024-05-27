@@ -45,13 +45,17 @@ const createDoc = (docType, inputFileName, inputData) => {
       terminSprzedażyDo: inputData.dates.salesEnd,
     });
 
-    filename = `Umowa ŁADS - Nadleśnictwo Brzeziny - ${
-      inputData.buyer.nip
-    } - ${Date.now()};`;
+    filename = `${inputData.buyer.nip} - umowa ŁADS - ${Date.now()};`;
   } else if (docType === 'catalog') {
     doc.render({ products: inputData });
 
     filename = `Katalog ŁADS - ${Date.now()};`;
+  } else if (docType === 'annex') {
+    doc.render({ boughtProducts: inputData });
+
+    filename = `${
+      inputData[0].maxBid.nip
+    } - załącznik do umowy - ${Date.now()};`;
   } else {
     return;
   }
