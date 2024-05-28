@@ -12,8 +12,8 @@ const productsSchema = new mongoose.Schema({
   class: { type: String, required: true },
   startingPriceSingle: { type: Number, required: true },
   startingPriceTotal: { type: Number, required: true },
-  finalPriceSingle: { type: Number, required: true },
-  finalPriceTotal: { type: Number, required: true },
+  finalPriceSingle: { type: Number, required: false },
+  finalPriceTotal: { type: Number, required: false },
   maxOffer: { type: String, required: false, ref: 'Offer' },
 });
 
