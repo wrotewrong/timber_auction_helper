@@ -1,6 +1,7 @@
 import express from 'express';
 import auctionRoutes from './routes/auctions.route.mjs';
 import catalogRoutes from './routes/catalog.route.mjs';
+import contractsRoutes from './routes/contracts.routes.mjs';
 import mongoose from 'mongoose';
 import cors from 'cors';
 import path from 'path';
@@ -21,6 +22,7 @@ app.use(auctionRoutes.addAuctions);
 app.use(auctionRoutes.deleteAuctions);
 
 app.use(catalogRoutes);
+app.use(contractsRoutes);
 
 app.use(cors());
 
