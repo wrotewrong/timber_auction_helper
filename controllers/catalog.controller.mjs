@@ -1,5 +1,11 @@
-import importExcelDataMDB from '../utils/importExcelDataMDB.mjs';
 import Products from '../models/productsModel.mjs';
+import importExcelDataMDB from '../utils/importExcelDataMDB.mjs';
+import createDoc from '../utils/createDocMDB.mjs';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 export const importData = async (req, res) => {
   try {
@@ -27,11 +33,24 @@ export const importData = async (req, res) => {
   }
 };
 
-export const downloadCatalog = (req, res) => {
+export const downloadCatalog = async (req, res) => {
   try {
-    res.status(200).json({ message: 'OK' });
+    const products = await Products.find();
+    const filename = createDoc('catalog', 'inputKatalog', products);
+    const filePath = path.join(__dirname, `../files/output/${filename}.docx`);
+    res.setHeader(
+      'Content-Disposition',
+      `attachment; filename="${encodeURIComponent(filename)}"`
+    );
+    res.status(200).sendFile(filePath, (err) => {
+      if (err) {
+        console.error('Error sending file:', err);
+        res.status(500).send('Error sending file');
+      }
+    });
   } catch (err) {
     res.status(500).json({ message: err.message });
+    console.log(err.message);
   }
 };
 

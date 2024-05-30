@@ -3,9 +3,15 @@ import auctionRoutes from './routes/auctions.route.mjs';
 import catalogRoutes from './routes/catalog.route.mjs';
 import mongoose from 'mongoose';
 import cors from 'cors';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const app = express();
 
+app.use(express.static(path.join(__dirname, '/files/output')));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
