@@ -1,8 +1,8 @@
 import mongoose from 'mongoose';
 
 const offersSchema = new mongoose.Schema({
-  productNumber: { type: Number, required: true, ref: 'Product' },
-  nip: { type: Number, required: true, ref: 'Company' },
+  productNumber: { type: String, required: true, ref: 'Product' },
+  nip: { type: String, required: true, ref: 'Company' },
   bid: { type: Number, required: true },
 });
 

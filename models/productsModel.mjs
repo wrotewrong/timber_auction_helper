@@ -1,10 +1,10 @@
 import mongoose from 'mongoose';
 
 const productsSchema = new mongoose.Schema({
-  productNumber: { type: Number, required: true },
+  productNumber: { type: String, required: true },
   forestDistrict: { type: String, required: true },
   districtUnit: { type: String, required: true },
-  woodNumber: { type: Number, required: true },
+  woodNumber: { type: String, required: true },
   species: { type: String, required: true },
   length: { type: Number, required: true },
   diameter: { type: Number, required: true },
