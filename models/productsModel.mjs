@@ -12,9 +12,9 @@ const productsSchema = new mongoose.Schema({
   class: { type: String, required: true },
   startingPriceSingle: { type: Number, required: true },
   startingPriceTotal: { type: Number, required: true },
-  finalPriceSingle: { type: Number, required: false },
-  finalPriceTotal: { type: Number, required: false },
-  maxOffer: { type: String, required: false, ref: 'Offer' },
+  maxOfferCompany: { type: String, default: '', required: false },
+  maxOfferBid: { type: Number, default: 0, required: false },
+  finalPriceTotal: { type: Number, default: 0, required: false },
 });
 
 export default mongoose.model('Products', productsSchema);
