@@ -118,4 +118,35 @@ export const estimateWinner = async (req, res) => {
   }
 };
 
-export default { importOffers, importCompanies, estimateWinner };
+export const prepareContracts = async (req, res) => {
+  try {
+    // const databaseProducts = await Products.find().populate({
+    //   path: 'maxOfferCompany',
+    //   model: 'Company',
+    //   localField: 'maxOfferCompany',
+    //   foreignField: 'nip',
+    // });
+
+    // const databaseCompanies = await Companies.find().populate({
+    //   path: 'productsWon',
+    //   model: 'Products',
+    //   localField: 'productsWon',
+    //   foreignField: 'productNumber',
+    // });
+
+    // console.log(databaseCompanies[2].productsWon[0].productNumber);
+
+    // const databaseCompanies = await Companies.find();
+    res.status(200).json({ message: 'OK' });
+  } catch (err) {
+    res.status(500).json({ message: err });
+    console.log(err);
+  }
+};
+
+export default {
+  importOffers,
+  importCompanies,
+  estimateWinner,
+  prepareContracts,
+};
