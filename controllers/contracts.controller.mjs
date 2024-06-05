@@ -3,6 +3,16 @@ import Companies from '../models/companiesModel.mjs';
 import Products from '../models/productsModel.mjs';
 import importExcelDataMDB from '../utils/importExcelDataMDB.mjs';
 import BigNumber from 'bignumber.js';
+import prepareContractsMDB from '../utils/prepareContractsMDB.mjs';
+import Contracts from '../models/contractsModel.mjs';
+import {
+  submissionStart,
+  submissionEnd,
+  receiptOfProducts,
+  salesStart,
+  salesEnd,
+} from '../backendConfig.mjs';
+import convertDate from '../utils/convertDate.mjs';
 
 export const importCompanies = async (req, res) => {
   try {
@@ -55,61 +65,152 @@ export const importOffers = async (req, res) => {
   }
 };
 
+// //estimateWinner first method - eliminate product when company minVplume is below volumeWon
+// export const estimateWinner = async (req, res) => {
+//   try {
+//     const databaseProducts = await Products.find();
+//     const databaseOffers = await Offers.find();
+//     const databaseCompanies = await Companies.find();
+
+//     for (let product of databaseProducts) {
+//       for (let offer of databaseOffers) {
+//         if (
+//           product.productNumber === offer.productNumber &&
+//           offer.bid > product.maxOfferBid
+//         ) {
+//           product.maxOfferCompany = offer.nip;
+//           product.maxOfferBid = offer.bid;
+//           product.finalPriceTotal = new BigNumber(product.volume).times(
+//             new BigNumber(offer.bid)
+//           );
+//         }
+//       }
+//       await product.save();
+//     }
+
+//     for (let company of databaseCompanies) {
+//       for (let product of databaseProducts) {
+//         if (company.nip === product.maxOfferCompany) {
+//           company.volumeWon = new BigNumber(company.volumeWon).plus(
+//             new BigNumber(product.volume)
+//           );
+//           company.productsWon.push(product.productNumber);
+//         }
+//       }
+//       await company.save();
+//     }
+
+//     for (let product of databaseProducts) {
+//       for (let company of databaseCompanies) {
+//         if (
+//           company.volumeWon < company.minVolume &&
+//           company.productsWon.includes(product.productNumber)
+//         ) {
+//           product.maxOfferCompany = '';
+//           product.maxOfferBid = 0;
+//           product.finalPriceTotal = 0;
+//         }
+//       }
+//       await product.save();
+//     }
+
+//     for (let company of databaseCompanies) {
+//       if (company.volumeWon < company.minVolume) {
+//         company.volumeWon = 0;
+//         company.productsWon = [];
+//       }
+//       await company.save();
+//     }
+
+//     res.status(200).json({ message: 'OK' });
+//   } catch (err) {
+//     res.status(500).json({ message: err });
+//     console.log(err);
+//   }
+// };
+
+//estimateWinner second method - eliminate companies offers based on the value: minVolume-volumeWon
 export const estimateWinner = async (req, res) => {
   try {
     const databaseProducts = await Products.find();
     const databaseOffers = await Offers.find();
     const databaseCompanies = await Companies.find();
 
-    for (let product of databaseProducts) {
-      for (let offer of databaseOffers) {
-        if (
-          product.productNumber === offer.productNumber &&
-          offer.bid > product.maxOfferBid
-        ) {
-          product.maxOfferCompany = offer.nip;
-          product.maxOfferBid = offer.bid;
-          product.finalPriceTotal = new BigNumber(product.volume).times(
-            new BigNumber(offer.bid)
-          );
-        }
-      }
-      await product.save();
-    }
-
-    for (let company of databaseCompanies) {
+    let belowCompanies = [];
+    do {
+      //assigns highest bid to product
       for (let product of databaseProducts) {
-        if (company.nip === product.maxOfferCompany) {
-          company.volumeWon = new BigNumber(company.volumeWon).plus(
-            new BigNumber(product.volume)
-          );
-          company.productsWon.push(product.productNumber);
+        for (let offer of databaseOffers) {
+          if (
+            product.productNumber === offer.productNumber &&
+            offer.bid > product.maxOfferBid
+          ) {
+            product.maxOfferCompany = offer.nip;
+            product.maxOfferBid = offer.bid;
+            product.finalPriceTotal = new BigNumber(product.volume).times(
+              new BigNumber(offer.bid)
+            );
+          }
         }
+        await product.save();
       }
-      await company.save();
-    }
 
-    for (let product of databaseProducts) {
+      //accumulates volumeWon of company and creates a list of products it has won
+      for (let company of databaseCompanies) {
+        for (let product of databaseProducts) {
+          if (company.nip === product.maxOfferCompany) {
+            company.volumeWon = new BigNumber(company.volumeWon).plus(
+              new BigNumber(product.volume)
+            );
+            company.productsWon.push(product.productNumber);
+          }
+        }
+        await company.save();
+      }
+
+      //finds and sort companies by minVolume-volumeWon value
+      belowCompanies = [];
       for (let company of databaseCompanies) {
         if (
-          company.volumeWon < company.minVolume &&
-          company.productsWon.includes(product.productNumber)
+          company.volumeWon > 0 &&
+          company.minVolume - company.volumeWon > 0
         ) {
+          belowCompanies.push(company);
+        }
+      }
+      belowCompanies.sort(
+        (a, b) => b.minVolume - b.volumeWon - (a.minVolume - a.volumeWon)
+      );
+
+      //removes the offers of company with the highest minVolume-volumeWon value
+      if (belowCompanies.length > 0) {
+        for (let offer of databaseOffers) {
+          if (offer.nip === belowCompanies[0].nip) {
+            console.log(
+              `Bid for timber: ${offer.productNumber} with: ${offer.bid} PLN from nip: ${offer.nip} has been excluded`
+            );
+            offer.bid = 0;
+            await offer.save();
+          }
+        }
+
+        //clears the bid assigned to all product
+        for (let product of databaseProducts) {
           product.maxOfferCompany = '';
           product.maxOfferBid = 0;
           product.finalPriceTotal = 0;
+          await product.save();
         }
-      }
-      await product.save();
-    }
 
-    for (let company of databaseCompanies) {
-      if (company.volumeWon < company.minVolume) {
-        company.volumeWon = 0;
-        company.productsWon = [];
+        //clears the volume and products list assigned to all companies
+        for (let company of databaseCompanies) {
+          company.volumeWon = 0;
+          company.productsWon = [];
+          await company.save();
+        }
+        belowCompanies.shift();
       }
-      await company.save();
-    }
+    } while (belowCompanies.length > 0);
 
     res.status(200).json({ message: 'OK' });
   } catch (err) {
@@ -118,25 +219,56 @@ export const estimateWinner = async (req, res) => {
   }
 };
 
-export const prepareContracts = async (req, res) => {
+export const addContracts = async (req, res) => {
   try {
-    // const databaseProducts = await Products.find().populate({
-    //   path: 'maxOfferCompany',
-    //   model: 'Company',
-    //   localField: 'maxOfferCompany',
-    //   foreignField: 'nip',
-    // });
+    const databaseCompanies = await Companies.find().populate({
+      path: 'productsWon',
+      model: 'Products',
+      localField: 'productsWon',
+      foreignField: 'productNumber',
+    });
+    console.log(databaseCompanies);
 
-    // const databaseCompanies = await Companies.find().populate({
-    //   path: 'productsWon',
-    //   model: 'Products',
-    //   localField: 'productsWon',
-    //   foreignField: 'productNumber',
-    // });
+    for (let company of databaseCompanies) {
+      if (company.productsWon.length > 0) {
+        const newContract = new Contracts({
+          buyer: {
+            nip: company.nip,
+            name: company.name,
+            zipCode: company.zipCode,
+            homeZipCode: company.homeZipCode,
+            courtZipCode: company.courtZipCode,
+            krsNumber: company.krsNumber,
+            regonNumber: company.regonNumber,
+            bdoNumber: company.bdoNumber || 'nie dotyczy',
+            firstRepresentative: company.firstRepresentative,
+            secondRepresentative: company.secondRepresentative || 'nie dotyczy',
+            isLegalPerson: company.isLegalPerson ? true : false,
+            isNaturalPerson: company.isNaturalPerson ? true : false,
+          },
+          timber: {
+            list: [...company.productsWon],
+            totalVolume: company.volumeWon,
+            totalPrice: company.productsWon.reduce(
+              (a, b) => new BigNumber(a).plus(new BigNumber(b.finalPriceTotal)),
+              new BigNumber(0)
+            ),
+          },
+          dates: {
+            submissionStart: convertDate(submissionStart),
+            submissionEnd: convertDate(submissionEnd),
+            receiptOfProducts: convertDate(receiptOfProducts),
+            salesStart: convertDate(salesStart),
+            salesEnd: convertDate(salesEnd),
+          },
+        });
+        await newContract.save();
+        console.log(
+          `Contract of the company nip: ${newContract.buyer.nip} has been added`
+        );
+      }
+    }
 
-    // console.log(databaseCompanies[2].productsWon[0].productNumber);
-
-    // const databaseCompanies = await Companies.find();
     res.status(200).json({ message: 'OK' });
   } catch (err) {
     res.status(500).json({ message: err });
@@ -148,5 +280,5 @@ export default {
   importOffers,
   importCompanies,
   estimateWinner,
-  prepareContracts,
+  addContracts,
 };

@@ -6,6 +6,6 @@ const router = express.Router();
 router.post('/contracts/importOffers', contractsController.importOffers);
 router.post('/contracts/importCompanies', contractsController.importCompanies);
 router.get('/contracts/estimate', contractsController.estimateWinner);
-router.get('/contracts/prepare', contractsController.prepareContracts);
+router.post('/contracts/add', contractsController.addContracts);
 
 export default router;
