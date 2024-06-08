@@ -13,6 +13,7 @@ import {
   salesEnd,
 } from '../backendConfig.mjs';
 import convertDate from '../utils/convertDate.mjs';
+import pickRandomOffer from '../utils/pickRandomOffer.mjs';
 
 export const importCompanies = async (req, res) => {
   try {
@@ -65,7 +66,7 @@ export const importOffers = async (req, res) => {
   }
 };
 
-// //estimateWinner first method - eliminate product when company minVplume is below volumeWon
+// //estimateWinner first method - eliminate product when company minVolume is below volumeWon (!warning it is without randomness)
 // export const estimateWinner = async (req, res) => {
 //   try {
 //     const databaseProducts = await Products.find();
@@ -137,23 +138,112 @@ export const estimateWinner = async (req, res) => {
     const databaseCompanies = await Companies.find();
 
     let belowCompanies = [];
+    let stepsCounter = 0;
+
     do {
+      stepsCounter++;
+      console.log(
+        `PRZYPISYWANIE OFERT - ROZPOCZĘCIE - ETAP ${stepsCounter}...`
+      );
+
       //assigns highest bid to product
       for (let product of databaseProducts) {
-        for (let offer of databaseOffers) {
-          if (
-            product.productNumber === offer.productNumber &&
-            offer.bid > product.maxOfferBid
-          ) {
-            product.maxOfferCompany = offer.nip;
-            product.maxOfferBid = offer.bid;
-            product.finalPriceTotal = new BigNumber(product.volume).times(
-              new BigNumber(offer.bid)
+        const productOffers = databaseOffers.filter(
+          (offer) =>
+            product.productNumber === offer.productNumber && offer.bid > 0
+        );
+        // console.log('productOffers', productOffers);
+
+        if (productOffers.length) {
+          const bids = productOffers.map((offer) => offer.bid);
+          // console.log('bids', bids);
+
+          const maxBid = Math.max(...bids);
+          // console.log('maxBid', maxBid);
+
+          const maxOffers = productOffers.filter(
+            (offer) => offer.bid === maxBid
+          );
+          // console.log('maxOffers', maxOffers);
+
+          const winningOffer = pickRandomOffer(product, maxOffers);
+          if (maxOffers.length > 1) {
+            const losingOffers = maxOffers.filter(
+              (offer) => offer.nip !== winningOffer.nip
             );
+            // console.log('losingOffers', losingOffers);
+
+            for (let databaseOffer of databaseOffers) {
+              for (let losingOffer of losingOffers) {
+                if (
+                  databaseOffer.nip === losingOffer.nip &&
+                  databaseOffer.productNumber === losingOffer.productNumber
+                ) {
+                  console.log(
+                    `LOS nr ${product.productNumber} - losowo wykluczono ofertę firmy nip: ${databaseOffer.nip}, która zaoferowała ${databaseOffer.bid} PLN`
+                  );
+                  databaseOffer.bid = 0;
+                  await databaseOffer.save();
+                }
+              }
+            }
           }
+
+          product.maxOfferCompany = winningOffer.nip;
+          product.maxOfferBid = winningOffer.bid;
+          product.finalPriceTotal = new BigNumber(product.volume).times(
+            new BigNumber(winningOffer.bid)
+          );
+          await product.save();
+        } else {
+          console.log(`LOS nr ${product.productNumber} - brak ofert`);
         }
-        await product.save();
       }
+
+      // for (let product of databaseProducts) {
+      //   let winningOffers = [];
+      //   for (let offer of databaseOffers) {
+      //     if (
+      //       product.productNumber === offer.productNumber &&
+      //       offer.bid > product.maxOfferBid
+      //     ) {
+      //       winningOffers = [];
+      //       winningOffers.push(offer);
+      //       product.maxOfferCompany = offer.nip;
+      //       product.maxOfferBid = offer.bid;
+      //       product.finalPriceTotal = new BigNumber(product.volume).times(
+      //         new BigNumber(offer.bid)
+      //       );
+      //       console.log(
+      //         `Offer of nip: ${offer.nip} with ${offer.bid} PLN assigned to product ${product.productNumber}`
+      //       );
+      //     } else if (
+      //       product.productNumber === offer.productNumber &&
+      //       offer.bid === product.maxOfferBid
+      //     ) {
+      //       winningOffers.push(offer);
+      //       const finalOffer = pickRandomOffer(winningOffers);
+      //       product.maxOfferCompany = finalOffer.nip;
+      //       product.maxOfferBid = finalOffer.bid;
+      //       product.finalPriceTotal = new BigNumber(product.volume).times(
+      //         new BigNumber(finalOffer.bid)
+      //       );
+      //       console.log(
+      //         `Offer of nip: ${finalOffer.nip} with ${finalOffer.bid} PLN assigned to product ${product.productNumber}`
+      //       );
+      //     } else if (
+      //       product.productNumber === offer.productNumber &&
+      //       offer.bid < product.maxOfferBid
+      //     ) {
+      //       console.log(
+      //         `Offer of nip: ${offer.nip} with ${offer.bid} PLN for product ${product.productNumber} is too low - skip and move to the next offer`
+      //       );
+      //     }
+      //   }
+      //   console.log(`Product ${product.productNumber} saved to the database`);
+      //   await product.save();
+      //   winningOffers = [];
+      // }
 
       //accumulates volumeWon of company and creates a list of products it has won
       for (let company of databaseCompanies) {
@@ -169,25 +259,40 @@ export const estimateWinner = async (req, res) => {
       }
 
       //finds and sort companies by minVolume-volumeWon value
-      belowCompanies = [];
-      for (let company of databaseCompanies) {
-        if (
-          company.volumeWon > 0 &&
-          company.minVolume - company.volumeWon > 0
-        ) {
-          belowCompanies.push(company);
-        }
-      }
-      belowCompanies.sort(
-        (a, b) => b.minVolume - b.volumeWon - (a.minVolume - a.volumeWon)
+      belowCompanies = databaseCompanies.filter(
+        (company) =>
+          company.minVolume - company.volumeWon > 0 && company.volumeWon > 0
       );
+
+      belowCompanies.sort((a, b) => {
+        const aResult = new BigNumber(a.minVolume).minus(
+          new BigNumber(a.volumeWon)
+        );
+        const bResult = new BigNumber(b.minVolume).minus(
+          new BigNumber(b.volumeWon)
+        );
+
+        return bResult.minus(aResult);
+      });
+
+      belowCompanies.map((company) => {
+        console.log(
+          'Firmy, którym brakuje miąższości:',
+          'nip:',
+          company.nip,
+          'brakuje m3:',
+          new BigNumber(company.minVolume).minus(
+            new BigNumber(company.volumeWon)
+          )
+        );
+      });
 
       //removes the offers of company with the highest minVolume-volumeWon value
       if (belowCompanies.length > 0) {
         for (let offer of databaseOffers) {
-          if (offer.nip === belowCompanies[0].nip) {
+          if (offer.nip === belowCompanies[0].nip && offer.bid > 0) {
             console.log(
-              `Bid for timber: ${offer.productNumber} with: ${offer.bid} PLN from nip: ${offer.nip} has been excluded`
+              `Oferta firmy nip: ${offer.nip} na LOS nr ${offer.productNumber} o wartości: ${offer.bid} PLN została wykluczona`
             );
             offer.bid = 0;
             await offer.save();
@@ -208,9 +313,11 @@ export const estimateWinner = async (req, res) => {
           company.productsWon = [];
           await company.save();
         }
-        belowCompanies.shift();
+        // belowCompanies.shift();
       }
+      console.log(`PRZYPISYWANIE OFERT - ZAKOŃCZENIE - ETAP ${stepsCounter}`);
     } while (belowCompanies.length > 0);
+    console.log(`PRZYPISYWANIE SKOŃCZONE`);
 
     res.status(200).json({ message: 'OK' });
   } catch (err) {

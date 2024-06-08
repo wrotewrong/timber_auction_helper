@@ -1,0 +1,408 @@
+ASSIGNING OFFERS - START OF STEP 1...
+Product 1 - picked offer of nip: 5252516964 with 2000 PLN - the highest offer
+Product 2 - picked offer of nip: 7720100638 with 3000 PLN - the highest offer
+Product 3 - picked offer of nip: 8982126450 with 4000 PLN - the highest offer
+Product 4 - picked offer of nip: 1111111111 with 4000 PLN - the highest offer
+Product 5 - picked offer of nip: 2222222222 with 3000 PLN - the highest offer
+Product 6 - No offers
+Product 7 - randomly picked offer of nip: 3333333333 with 3000 PLN out of 3 offers with the same highest bid
+Product 7 - randomly excluded bid for timber: 7 with: 3000 PLN from nip: 2222222222
+Product 7 - randomly excluded bid for timber: 7 with: 3000 PLN from nip: 4444444444
+Product 8 - randomly picked offer of nip: 4444444444 with 2000 PLN out of 2 offers with the same highest bid
+Product 8 - randomly excluded bid for timber: 8 with: 2000 PLN from nip: 3333333333
+Product 9 - No offers
+Product 10 - No offers
+Product 11 - No offers
+Product 12 - No offers
+Product 13 - No offers
+Product 14 - No offers
+Product 15 - No offers
+Product 16 - No offers
+Product 17 - No offers
+Product 18 - No offers
+Product 19 - No offers
+Product 20 - No offers
+Product 21 - No offers
+Product 22 - No offers
+Product 23 - No offers
+Product 24 - No offers
+Product 25 - No offers
+Product 26 - No offers
+below [
+  {
+    _id: new ObjectId('666385309f0ec1d87e6e731c'),
+    nip: '8982126450',
+    name: 'Z',
+    zipCode: '76-923 Kielce, 3 Maja',
+    homeZipCode: '76-923 Wrocław, 3 Maja',
+    courtZipCode: '76-923 Mielno, 3 Maja',
+    krsNumber: '0000684586',
+    regonNumber: '345678912',
+    bdoNumber: '345678912',
+    firstRepresentative: 'Justyna Jaskulska',
+    secondRepresentative: 'Konrad Jaskulski',
+    isLegalPerson: 'tak',
+    isNaturalPerson: null,
+    minVolume: 6,
+    volumeWon: 4,
+    productsWon: [ '3' ],
+    __v: 1
+  },
+  {
+    _id: new ObjectId('666385309f0ec1d87e6e731a'),
+    nip: '7720100638',
+    name: 'Y',
+    zipCode: '91-829 Łódź, Jaracza 87',
+    homeZipCode: '91-829 Koło, Jaracza 87',
+    courtZipCode: '91-829 Toruń, Jaracza 87',
+    krsNumber: '0000456843',
+    regonNumber: '234567891',
+    bdoNumber: null,
+    firstRepresentative: 'Tomasz Polak',
+    secondRepresentative: null,
+    isLegalPerson: null,
+    isNaturalPerson: 'tak',
+    minVolume: 5,
+    volumeWon: 4,
+    productsWon: [ '2' ],
+    __v: 1
+  },
+  {
+    _id: new ObjectId('666385309f0ec1d87e6e7322'),
+    nip: '3333333333',
+    name: 'C',
+    zipCode: 'c',
+    homeZipCode: 'cc',
+    courtZipCode: 'ccc',
+    krsNumber: 'cccc',
+    regonNumber: 'cccc',
+    bdoNumber: 'cccc',
+    firstRepresentative: 'cccc',
+    secondRepresentative: 'ccc',
+    isLegalPerson: 'tak',
+    isNaturalPerson: null,
+    minVolume: 5,
+    volumeWon: 4,
+    productsWon: [ '7' ],
+    __v: 1
+  },
+  {
+    _id: new ObjectId('666385309f0ec1d87e6e7324'),
+    nip: '4444444444',
+    name: 'D',
+    zipCode: 'd',
+    homeZipCode: 'dd',
+    courtZipCode: 'ddd',
+    krsNumber: 'dddd',
+    regonNumber: 'ddd',
+    bdoNumber: 'dddd',
+    firstRepresentative: 'ddd',
+    secondRepresentative: 'ddd',
+    isLegalPerson: null,
+    isNaturalPerson: 'tak',
+    minVolume: 5,
+    volumeWon: 4,
+    productsWon: [ '8' ],
+    __v: 1
+  },
+  {
+    _id: new ObjectId('666385309f0ec1d87e6e7318'),
+    nip: '5252516964',
+    name: 'X',
+    zipCode: '45-283 Warszawa, Łazienkowska 5',
+    homeZipCode: '45-283 Gdańsk, Zaokopowa 4',
+    courtZipCode: '45-283 Poznań, Toruńska 4',
+    krsNumber: '0000396227',
+    regonNumber: '123456789',
+    bdoNumber: '123456789',
+    firstRepresentative: 'Jan Kowalski',
+    secondRepresentative: 'Janina Kowalska',
+    isLegalPerson: null,
+    isNaturalPerson: null,
+    minVolume: 4.5,
+    volumeWon: 4,
+    productsWon: [ '1' ],
+    __v: 1
+  },
+  {
+    _id: new ObjectId('666385309f0ec1d87e6e731e'),
+    nip: '1111111111',
+    name: 'A',
+    zipCode: 'a',
+    homeZipCode: 'aa',
+    courtZipCode: 'aaa',
+    krsNumber: 'aaaa',
+    regonNumber: 'aaaaa',
+    bdoNumber: 'aaaaa',
+    firstRepresentative: 'aaaaa',
+    secondRepresentative: 'aaa',
+    isLegalPerson: 'tak',
+    isNaturalPerson: null,
+    minVolume: 4.1,
+    volumeWon: 4,
+    productsWon: [ '4' ],
+    __v: 1
+  }
+]
+Bid for timber: 2 with: 2000 PLN from nip: 8982126450 has been excluded
+Bid for timber: 3 with: 4000 PLN from nip: 8982126450 has been excluded
+Bid for timber: 4 with: 2000 PLN from nip: 8982126450 has been excluded
+ASSIGNING OFFERS - END OF STEP 1
+ASSIGNING OFFERS - START OF STEP 2...
+Product 1 - picked offer of nip: 5252516964 with 2000 PLN - the highest offer
+Product 2 - picked offer of nip: 7720100638 with 3000 PLN - the highest offer
+Product 3 - picked offer of nip: 5252516964 with 3000 PLN - the highest offer
+Product 4 - picked offer of nip: 1111111111 with 4000 PLN - the highest offer
+Product 5 - picked offer of nip: 2222222222 with 3000 PLN - the highest offer
+Product 6 - No offers
+Product 7 - picked offer of nip: 3333333333 with 3000 PLN - the highest offer
+Product 8 - picked offer of nip: 4444444444 with 2000 PLN - the highest offer
+Product 9 - No offers
+Product 10 - No offers
+Product 11 - No offers
+Product 12 - No offers
+Product 13 - No offers
+Product 14 - No offers
+Product 15 - No offers
+Product 16 - No offers
+Product 17 - No offers
+Product 18 - No offers
+Product 19 - No offers
+Product 20 - No offers
+Product 21 - No offers
+Product 22 - No offers
+Product 23 - No offers
+Product 24 - No offers
+Product 25 - No offers
+Product 26 - No offers
+below [
+  {
+    _id: new ObjectId('666385309f0ec1d87e6e731a'),
+    nip: '7720100638',
+    name: 'Y',
+    zipCode: '91-829 Łódź, Jaracza 87',
+    homeZipCode: '91-829 Koło, Jaracza 87',
+    courtZipCode: '91-829 Toruń, Jaracza 87',
+    krsNumber: '0000456843',
+    regonNumber: '234567891',
+    bdoNumber: null,
+    firstRepresentative: 'Tomasz Polak',
+    secondRepresentative: null,
+    isLegalPerson: null,
+    isNaturalPerson: 'tak',
+    minVolume: 5,
+    volumeWon: 4,
+    productsWon: [ '2' ],
+    __v: 3
+  },
+  {
+    _id: new ObjectId('666385309f0ec1d87e6e7322'),
+    nip: '3333333333',
+    name: 'C',
+    zipCode: 'c',
+    homeZipCode: 'cc',
+    courtZipCode: 'ccc',
+    krsNumber: 'cccc',
+    regonNumber: 'cccc',
+    bdoNumber: 'cccc',
+    firstRepresentative: 'cccc',
+    secondRepresentative: 'ccc',
+    isLegalPerson: 'tak',
+    isNaturalPerson: null,
+    minVolume: 5,
+    volumeWon: 4,
+    productsWon: [ '7' ],
+    __v: 3
+  },
+  {
+    _id: new ObjectId('666385309f0ec1d87e6e7324'),
+    nip: '4444444444',
+    name: 'D',
+    zipCode: 'd',
+    homeZipCode: 'dd',
+    courtZipCode: 'ddd',
+    krsNumber: 'dddd',
+    regonNumber: 'ddd',
+    bdoNumber: 'dddd',
+    firstRepresentative: 'ddd',
+    secondRepresentative: 'ddd',
+    isLegalPerson: null,
+    isNaturalPerson: 'tak',
+    minVolume: 5,
+    volumeWon: 4,
+    productsWon: [ '8' ],
+    __v: 3
+  },
+  {
+    _id: new ObjectId('666385309f0ec1d87e6e731e'),
+    nip: '1111111111',
+    name: 'A',
+    zipCode: 'a',
+    homeZipCode: 'aa',
+    courtZipCode: 'aaa',
+    krsNumber: 'aaaa',
+    regonNumber: 'aaaaa',
+    bdoNumber: 'aaaaa',
+    firstRepresentative: 'aaaaa',
+    secondRepresentative: 'aaa',
+    isLegalPerson: 'tak',
+    isNaturalPerson: null,
+    minVolume: 4.1,
+    volumeWon: 4,
+    productsWon: [ '4' ],
+    __v: 3
+  }
+]
+Bid for timber: 1 with: 1500 PLN from nip: 7720100638 has been excluded
+Bid for timber: 2 with: 3000 PLN from nip: 7720100638 has been excluded
+Bid for timber: 4 with: 3000 PLN from nip: 7720100638 has been excluded
+ASSIGNING OFFERS - END OF STEP 2
+ASSIGNING OFFERS - START OF STEP 3...
+Product 1 - picked offer of nip: 5252516964 with 2000 PLN - the highest offer
+Product 2 - picked offer of nip: 1111111111 with 1500 PLN - the highest offer
+Product 3 - picked offer of nip: 5252516964 with 3000 PLN - the highest offer
+Product 4 - picked offer of nip: 1111111111 with 4000 PLN - the highest offer
+Product 5 - picked offer of nip: 2222222222 with 3000 PLN - the highest offer
+Product 6 - No offers
+Product 7 - picked offer of nip: 3333333333 with 3000 PLN - the highest offer
+Product 8 - picked offer of nip: 4444444444 with 2000 PLN - the highest offer
+Product 9 - No offers
+Product 10 - No offers
+Product 11 - No offers
+Product 12 - No offers
+Product 13 - No offers
+Product 14 - No offers
+Product 15 - No offers
+Product 16 - No offers
+Product 17 - No offers
+Product 18 - No offers
+Product 19 - No offers
+Product 20 - No offers
+Product 21 - No offers
+Product 22 - No offers
+Product 23 - No offers
+Product 24 - No offers
+Product 25 - No offers
+Product 26 - No offers
+below [
+  {
+    _id: new ObjectId('666385309f0ec1d87e6e7322'),
+    nip: '3333333333',
+    name: 'C',
+    zipCode: 'c',
+    homeZipCode: 'cc',
+    courtZipCode: 'ccc',
+    krsNumber: 'cccc',
+    regonNumber: 'cccc',
+    bdoNumber: 'cccc',
+    firstRepresentative: 'cccc',
+    secondRepresentative: 'ccc',
+    isLegalPerson: 'tak',
+    isNaturalPerson: null,
+    minVolume: 5,
+    volumeWon: 4,
+    productsWon: [ '7' ],
+    __v: 5
+  },
+  {
+    _id: new ObjectId('666385309f0ec1d87e6e7324'),
+    nip: '4444444444',
+    name: 'D',
+    zipCode: 'd',
+    homeZipCode: 'dd',
+    courtZipCode: 'ddd',
+    krsNumber: 'dddd',
+    regonNumber: 'ddd',
+    bdoNumber: 'dddd',
+    firstRepresentative: 'ddd',
+    secondRepresentative: 'ddd',
+    isLegalPerson: null,
+    isNaturalPerson: 'tak',
+    minVolume: 5,
+    volumeWon: 4,
+    productsWon: [ '8' ],
+    __v: 5
+  }
+]
+Bid for timber: 7 with: 3000 PLN from nip: 3333333333 has been excluded
+ASSIGNING OFFERS - END OF STEP 3
+ASSIGNING OFFERS - START OF STEP 4...
+Product 1 - picked offer of nip: 5252516964 with 2000 PLN - the highest offer
+Product 2 - picked offer of nip: 1111111111 with 1500 PLN - the highest offer
+Product 3 - picked offer of nip: 5252516964 with 3000 PLN - the highest offer
+Product 4 - picked offer of nip: 1111111111 with 4000 PLN - the highest offer
+Product 5 - picked offer of nip: 2222222222 with 3000 PLN - the highest offer
+Product 6 - No offers
+Product 7 - No offers
+Product 8 - picked offer of nip: 4444444444 with 2000 PLN - the highest offer
+Product 9 - No offers
+Product 10 - No offers
+Product 11 - No offers
+Product 12 - No offers
+Product 13 - No offers
+Product 14 - No offers
+Product 15 - No offers
+Product 16 - No offers
+Product 17 - No offers
+Product 18 - No offers
+Product 19 - No offers
+Product 20 - No offers
+Product 21 - No offers
+Product 22 - No offers
+Product 23 - No offers
+Product 24 - No offers
+Product 25 - No offers
+Product 26 - No offers
+below [
+  {
+    _id: new ObjectId('666385309f0ec1d87e6e7324'),
+    nip: '4444444444',
+    name: 'D',
+    zipCode: 'd',
+    homeZipCode: 'dd',
+    courtZipCode: 'ddd',
+    krsNumber: 'dddd',
+    regonNumber: 'ddd',
+    bdoNumber: 'dddd',
+    firstRepresentative: 'ddd',
+    secondRepresentative: 'ddd',
+    isLegalPerson: null,
+    isNaturalPerson: 'tak',
+    minVolume: 5,
+    volumeWon: 4,
+    productsWon: [ '8' ],
+    __v: 7
+  }
+]
+Bid for timber: 8 with: 2000 PLN from nip: 4444444444 has been excluded
+ASSIGNING OFFERS - END OF STEP 4
+ASSIGNING OFFERS - START OF STEP 5...
+Product 1 - picked offer of nip: 5252516964 with 2000 PLN - the highest offer
+Product 2 - picked offer of nip: 1111111111 with 1500 PLN - the highest offer
+Product 3 - picked offer of nip: 5252516964 with 3000 PLN - the highest offer
+Product 4 - picked offer of nip: 1111111111 with 4000 PLN - the highest offer
+Product 5 - picked offer of nip: 2222222222 with 3000 PLN - the highest offer
+Product 6 - No offers
+Product 7 - No offers
+Product 8 - picked offer of nip: 2222222222 with 1500 PLN - the highest offer
+Product 9 - No offers
+Product 10 - No offers
+Product 11 - No offers
+Product 12 - No offers
+Product 13 - No offers
+Product 14 - No offers
+Product 15 - No offers
+Product 16 - No offers
+Product 17 - No offers
+Product 18 - No offers
+Product 19 - No offers
+Product 20 - No offers
+Product 21 - No offers
+Product 22 - No offers
+Product 23 - No offers
+Product 24 - No offers
+Product 25 - No offers
+Product 26 - No offers
+below []
+ASSIGNING OFFERS - END OF STEP 5
+ASSIGNING FINISHED
