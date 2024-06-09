@@ -51,11 +51,8 @@ const createDoc = (docType, inputFileName, inputData) => {
 
     filename = `Katalog ŁADS`;
   } else if (docType === 'annex') {
-    doc.render({ boughtProducts: inputData });
-
-    filename = `${
-      inputData[0].maxBid.nip
-    } - załącznik do umowy - ${Date.now()};`;
+    doc.render({ boughtProducts: inputData.timber.list });
+    filename = `${inputData.buyer.nip} - załącznik do umowy - ${Date.now()};`;
   } else {
     return;
   }

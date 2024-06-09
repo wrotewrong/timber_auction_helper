@@ -14,6 +14,8 @@ import {
 } from '../backendConfig.mjs';
 import convertDate from '../utils/convertDate.mjs';
 import pickRandomOffer from '../utils/pickRandomOffer.mjs';
+import createDoc from '../utils/createDocMDB.mjs';
+import companiesModel from '../models/companiesModel.mjs';
 
 export const importCompanies = async (req, res) => {
   try {
@@ -334,7 +336,6 @@ export const addContracts = async (req, res) => {
       localField: 'productsWon',
       foreignField: 'productNumber',
     });
-    console.log(databaseCompanies);
 
     for (let company of databaseCompanies) {
       if (company.productsWon.length > 0) {
@@ -374,6 +375,16 @@ export const addContracts = async (req, res) => {
           `Contract of the company nip: ${newContract.buyer.nip} has been added`
         );
       }
+    }
+
+    const contracts = await Contracts.find().populate({
+      path: 'timber.list',
+      model: 'Products',
+    });
+
+    for (let contract of contracts) {
+      createDoc('contract', 'inputUmowa', contract);
+      createDoc('annex', 'inputAnnex', contract);
     }
 
     res.status(200).json({ message: 'OK' });

@@ -15,7 +15,7 @@ const companiesSchema = new mongoose.Schema({
   isNaturalPerson: { type: String, required: false },
   minVolume: { type: Number, required: true },
   volumeWon: { type: Number, default: 0, required: true },
-  productsWon: { type: Array, default: [], required: true },
+  productsWon: [{ type: String, required: true }],
 });
 
 export default mongoose.model('Company', companiesSchema);

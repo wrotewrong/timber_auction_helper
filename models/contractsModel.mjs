@@ -16,7 +16,7 @@ const contractsSchema = new mongoose.Schema({
     isNaturalPerson: { type: Boolean, required: false },
   },
   timber: {
-    list: { type: Array, required: true },
+    list: [{ type: mongoose.Types.ObjectId, ref: 'Products' }],
     totalVolume: { type: Number, required: true },
     totalPrice: { type: Number, required: true },
   },
