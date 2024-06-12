@@ -16,6 +16,7 @@ const companiesSchema = new mongoose.Schema({
   minVolume: { type: Number, required: true },
   volumeWon: { type: Number, default: 0, required: true },
   productsWon: [{ type: String, required: true }],
+  status: { type: String, default: 'active', required: true },
 });
 
 export default mongoose.model('Company', companiesSchema);

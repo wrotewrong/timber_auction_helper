@@ -16,6 +16,7 @@ import convertDate from '../utils/convertDate.mjs';
 import pickRandomOffer from '../utils/pickRandomOffer.mjs';
 import createDoc from '../utils/createDocMDB.mjs';
 import companiesModel from '../models/companiesModel.mjs';
+import excludeRandomOffer from '../utils/excludeRandomOffer.mjs';
 
 export const importCompanies = async (req, res) => {
   try {
@@ -68,71 +69,7 @@ export const importOffers = async (req, res) => {
   }
 };
 
-// //estimateWinner first method - eliminate product when company minVolume is below volumeWon (!warning it is without randomness)
-// export const estimateWinner = async (req, res) => {
-//   try {
-//     const databaseProducts = await Products.find();
-//     const databaseOffers = await Offers.find();
-//     const databaseCompanies = await Companies.find();
-
-//     for (let product of databaseProducts) {
-//       for (let offer of databaseOffers) {
-//         if (
-//           product.productNumber === offer.productNumber &&
-//           offer.bid > product.maxOfferBid
-//         ) {
-//           product.maxOfferCompany = offer.nip;
-//           product.maxOfferBid = offer.bid;
-//           product.finalPriceTotal = new BigNumber(product.volume).times(
-//             new BigNumber(offer.bid)
-//           );
-//         }
-//       }
-//       await product.save();
-//     }
-
-//     for (let company of databaseCompanies) {
-//       for (let product of databaseProducts) {
-//         if (company.nip === product.maxOfferCompany) {
-//           company.volumeWon = new BigNumber(company.volumeWon).plus(
-//             new BigNumber(product.volume)
-//           );
-//           company.productsWon.push(product.productNumber);
-//         }
-//       }
-//       await company.save();
-//     }
-
-//     for (let product of databaseProducts) {
-//       for (let company of databaseCompanies) {
-//         if (
-//           company.volumeWon < company.minVolume &&
-//           company.productsWon.includes(product.productNumber)
-//         ) {
-//           product.maxOfferCompany = '';
-//           product.maxOfferBid = 0;
-//           product.finalPriceTotal = 0;
-//         }
-//       }
-//       await product.save();
-//     }
-
-//     for (let company of databaseCompanies) {
-//       if (company.volumeWon < company.minVolume) {
-//         company.volumeWon = 0;
-//         company.productsWon = [];
-//       }
-//       await company.save();
-//     }
-
-//     res.status(200).json({ message: 'OK' });
-//   } catch (err) {
-//     res.status(500).json({ message: err });
-//     console.log(err);
-//   }
-// };
-
-//estimateWinner second method - eliminate companies offers based on the value: minVolume-volumeWon
+//estimateWinner method - eliminate companies offers based on the value: minVolume-volumeWon
 export const estimateWinner = async (req, res) => {
   try {
     const databaseProducts = await Products.find();
@@ -169,27 +106,27 @@ export const estimateWinner = async (req, res) => {
           // console.log('maxOffers', maxOffers);
 
           const winningOffer = pickRandomOffer(product, maxOffers);
-          if (maxOffers.length > 1) {
-            const losingOffers = maxOffers.filter(
-              (offer) => offer.nip !== winningOffer.nip
-            );
-            // console.log('losingOffers', losingOffers);
+          // if (maxOffers.length > 1) {
+          //   const losingOffers = maxOffers.filter(
+          //     (offer) => offer.nip !== winningOffer.nip
+          //   );
+          //   // console.log('losingOffers', losingOffers);
 
-            for (let databaseOffer of databaseOffers) {
-              for (let losingOffer of losingOffers) {
-                if (
-                  databaseOffer.nip === losingOffer.nip &&
-                  databaseOffer.productNumber === losingOffer.productNumber
-                ) {
-                  console.log(
-                    `LOS nr ${product.productNumber} - losowo wykluczono ofertę firmy nip: ${databaseOffer.nip}, która zaoferowała ${databaseOffer.bid} PLN`
-                  );
-                  databaseOffer.bid = 0;
-                  await databaseOffer.save();
-                }
-              }
-            }
-          }
+          //   for (let databaseOffer of databaseOffers) {
+          //     for (let losingOffer of losingOffers) {
+          //       if (
+          //         databaseOffer.nip === losingOffer.nip &&
+          //         databaseOffer.productNumber === losingOffer.productNumber
+          //       ) {
+          //         console.log(
+          //           `LOS nr ${product.productNumber} - losowo wykluczono ofertę firmy nip: ${databaseOffer.nip}, która zaoferowała ${databaseOffer.bid} PLN`
+          //         );
+          //         databaseOffer.bid = 0;
+          //         await databaseOffer.save();
+          //       }
+          //     }
+          //   }
+          // }
 
           product.maxOfferCompany = winningOffer.nip;
           product.maxOfferBid = winningOffer.bid;
@@ -260,22 +197,12 @@ export const estimateWinner = async (req, res) => {
         await company.save();
       }
 
-      //finds and sort companies by minVolume-volumeWon value
+      //finds companies that didnt bought enough volume and picks one with the highest missing volume at random
       belowCompanies = databaseCompanies.filter(
         (company) =>
-          company.minVolume - company.volumeWon > 0 && company.volumeWon > 0
+          company.minVolume - company.volumeWon > 0 &&
+          company.status === 'active'
       );
-
-      belowCompanies.sort((a, b) => {
-        const aResult = new BigNumber(a.minVolume).minus(
-          new BigNumber(a.volumeWon)
-        );
-        const bResult = new BigNumber(b.minVolume).minus(
-          new BigNumber(b.volumeWon)
-        );
-
-        return bResult.minus(aResult);
-      });
 
       belowCompanies.map((company) => {
         console.log(
@@ -289,10 +216,48 @@ export const estimateWinner = async (req, res) => {
         );
       });
 
+      let belowCompaniesAllDiffrences = belowCompanies.map((company) =>
+        new BigNumber(company.minVolume).minus(new BigNumber(company.volumeWon))
+      );
+      console.log('belowCompaniesAllDiffrences', belowCompaniesAllDiffrences);
+
+      let belowCompaniesMaxDiffrence = Math.max(...belowCompaniesAllDiffrences);
+      console.log('belowCompaniesMaxDiffrence', belowCompaniesMaxDiffrence);
+
+      let maxBelowCompanies = belowCompanies.filter(
+        (company) =>
+          new BigNumber(company.minVolume).minus(
+            new BigNumber(company.volumeWon)
+          ) == belowCompaniesMaxDiffrence
+      );
+      console.log('maxBelowCompanies', maxBelowCompanies);
+
+      const excludedOffer = excludeRandomOffer(maxBelowCompanies);
+
+      console.log('excludedOffer', excludedOffer);
+
+      for (let company of databaseCompanies) {
+        if (excludedOffer && company.nip === excludedOffer.nip) {
+          company.status = 'excluded';
+          await company.save();
+        }
+      }
+
+      // belowCompanies.sort((a, b) => {
+      //   const aResult = new BigNumber(a.minVolume).minus(
+      //     new BigNumber(a.volumeWon)
+      //   );
+      //   const bResult = new BigNumber(b.minVolume).minus(
+      //     new BigNumber(b.volumeWon)
+      //   );
+
+      //   return bResult.minus(aResult);
+      // });
+
       //removes the offers of company with the highest minVolume-volumeWon value
-      if (belowCompanies.length > 0) {
+      if (excludedOffer) {
         for (let offer of databaseOffers) {
-          if (offer.nip === belowCompanies[0].nip && offer.bid > 0) {
+          if (offer.nip === excludedOffer.nip && offer.bid > 0) {
             console.log(
               `Oferta firmy nip: ${offer.nip} na LOS nr ${offer.productNumber} o wartości: ${offer.bid} PLN została wykluczona`
             );
@@ -300,6 +265,17 @@ export const estimateWinner = async (req, res) => {
             await offer.save();
           }
         }
+
+        // if (belowCompanies.length > 0) {
+        //   for (let offer of databaseOffers) {
+        //     if (offer.nip === belowCompanies[0].nip && offer.bid > 0) {
+        //       console.log(
+        //         `Oferta firmy nip: ${offer.nip} na LOS nr ${offer.productNumber} o wartości: ${offer.bid} PLN została wykluczona`
+        //       );
+        //       offer.bid = 0;
+        //       await offer.save();
+        //     }
+        //   }
 
         //clears the bid assigned to all product
         for (let product of databaseProducts) {
@@ -315,7 +291,6 @@ export const estimateWinner = async (req, res) => {
           company.productsWon = [];
           await company.save();
         }
-        // belowCompanies.shift();
       }
       console.log(`PRZYPISYWANIE OFERT - ZAKOŃCZENIE - ETAP ${stepsCounter}`);
     } while (belowCompanies.length > 0);
