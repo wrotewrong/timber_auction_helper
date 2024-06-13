@@ -4,6 +4,7 @@ import Docxtemplater from 'docxtemplater';
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import generateContractNumber from './generateContractNumber.mjs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -51,8 +52,17 @@ const createDoc = (docType, inputFileName, inputData) => {
 
     filename = `Katalog ŁADS`;
   } else if (docType === 'annex') {
-    doc.render({ boughtProducts: inputData.timber.list });
-    filename = `${inputData.buyer.nip} - załącznik do umowy - ${Date.now()};`;
+    for (let timber of inputData.timber.list) {
+      timber.generatedNumber = `${inputData.timber.list.indexOf(timber) + 1}.`;
+    }
+    doc.render({
+      contractNumber: inputData.number,
+      name: inputData.buyer.name,
+      boughtProducts: inputData.timber.list,
+      totalVolume: inputData.timber.totalVolume,
+      totalPrice: inputData.timber.totalPrice,
+    });
+    filename = `${inputData.number} - nip ${inputData.buyer.nip} - załącznik nr 1 do umowy`;
   } else {
     return;
   }

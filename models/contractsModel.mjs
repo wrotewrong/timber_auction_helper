@@ -1,6 +1,7 @@
 import mongoose from 'mongoose';
 
 const contractsSchema = new mongoose.Schema({
+  number: { type: String, required: true },
   buyer: {
     nip: { type: String, required: true },
     name: { type: String, required: true },

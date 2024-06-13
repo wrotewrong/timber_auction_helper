@@ -17,6 +17,7 @@ import pickRandomOffer from '../utils/pickRandomOffer.mjs';
 import createDoc from '../utils/createDocMDB.mjs';
 import companiesModel from '../models/companiesModel.mjs';
 import excludeRandomOffer from '../utils/excludeRandomOffer.mjs';
+import generateContractNumber from '../utils/generateContractNumber.mjs';
 
 export const importCompanies = async (req, res) => {
   try {
@@ -312,9 +313,12 @@ export const addContracts = async (req, res) => {
       foreignField: 'productNumber',
     });
 
+    let contractCounter = 0;
     for (let company of databaseCompanies) {
       if (company.productsWon.length > 0) {
+        contractCounter++;
         const newContract = new Contracts({
+          number: generateContractNumber(contractCounter),
           buyer: {
             nip: company.nip,
             name: company.name,
