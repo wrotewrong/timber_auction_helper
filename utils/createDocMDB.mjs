@@ -5,6 +5,7 @@ import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import generateContractNumber from './generateContractNumber.mjs';
+import bigNumberFormat from '../utils/bigNumberFormat.mjs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -52,16 +53,28 @@ const createDoc = (docType, inputFileName, inputData) => {
 
     filename = `Katalog ŁADS`;
   } else if (docType === 'annex') {
-    for (let timber of inputData.timber.list) {
-      timber.generatedNumber = `${inputData.timber.list.indexOf(timber) + 1}.`;
-    }
+    const plainProducts = inputData.timber.list.map((product) => {
+      return product.toObject();
+    });
+
     doc.render({
       contractNumber: inputData.number,
       name: inputData.buyer.name,
-      boughtProducts: inputData.timber.list,
-      totalVolume: inputData.timber.totalVolume,
-      totalPrice: inputData.timber.totalPrice,
+      boughtProducts: plainProducts.map((product) => {
+        product.generatedNumber = `${plainProducts.indexOf(product) + 1}.`;
+        for (let property in product) {
+          if (product.hasOwnProperty(property)) {
+            if (typeof product[property] === 'number') {
+              product[property] = bigNumberFormat(product[property]);
+            }
+          }
+        }
+        return product;
+      }),
+      totalVolume: bigNumberFormat(inputData.timber.totalVolume),
+      totalPrice: bigNumberFormat(inputData.timber.totalPrice),
     });
+
     filename = `${inputData.number} - nip ${inputData.buyer.nip} - załącznik nr 1 do umowy`;
   } else {
     return;

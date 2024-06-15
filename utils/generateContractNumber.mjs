@@ -5,7 +5,10 @@ import {
 } from '../backendConfig.mjs';
 
 const generateContractNumber = (number) => {
-  return `A${contractDate.getFullYear()}${contractNumberRdlpNumber}${contractNumberForestDistrictNumber}${number
+  const years = contractDate.getFullYear().toString();
+  return `A${years.substring(
+    2
+  )}${contractNumberRdlpNumber}${contractNumberForestDistrictNumber}${number
     .toString()
     .padStart(3, '0')}`;
 };
