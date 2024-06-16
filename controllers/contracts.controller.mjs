@@ -6,6 +6,7 @@ import BigNumber from 'bignumber.js';
 import prepareContractsMDB from '../utils/prepareContractsMDB.mjs';
 import Contracts from '../models/contractsModel.mjs';
 import {
+  contractDate,
   submissionStart,
   submissionEnd,
   receiptOfProducts,
@@ -342,6 +343,7 @@ export const addContracts = async (req, res) => {
             ),
           },
           dates: {
+            contractDate: convertDate(contractDate),
             submissionStart: convertDate(submissionStart),
             submissionEnd: convertDate(submissionEnd),
             receiptOfProducts: convertDate(receiptOfProducts),

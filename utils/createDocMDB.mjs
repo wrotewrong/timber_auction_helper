@@ -4,7 +4,6 @@ import Docxtemplater from 'docxtemplater';
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import generateContractNumber from './generateContractNumber.mjs';
 import bigNumberFormat from '../utils/bigNumberFormat.mjs';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -26,6 +25,8 @@ const createDoc = (docType, inputFileName, inputData) => {
   let filename = '';
   if (docType === 'contract') {
     doc.render({
+      numerUmowy: inputData.number,
+      dataUmowy: inputData.dates.contractDate,
       nazwaFirmy: inputData.buyer.name,
       siedzibaFirmy: inputData.buyer.zipCode,
       siedzibaSądu: inputData.buyer.courtZipCode,
@@ -40,18 +41,32 @@ const createDoc = (docType, inputFileName, inputData) => {
       osobaPrawna: inputData.buyer.isLegalperson,
       dzieńRozpoczęcia: inputData.dates.submissionStart,
       dzieńZakończenia: inputData.dates.submissionEnd,
-      ilośćCałkowita: inputData.timber.totalVolume,
-      wartośćCałkowita: inputData.timber.totalPrice,
+      ilośćCałkowita: bigNumberFormat(inputData.timber.totalVolume),
+      wartośćCałkowita: bigNumberFormat(inputData.timber.totalPrice),
       terminOdbioru: inputData.dates.receiptOfProducts,
       terminSprzedażyOd: inputData.dates.salesStart,
       terminSprzedażyDo: inputData.dates.salesEnd,
     });
 
-    filename = `${inputData.buyer.nip} - umowa ŁADS - ${Date.now()};`;
+    filename = `${inputData.number} - nip ${inputData.buyer.nip} - umowa`;
   } else if (docType === 'catalog') {
-    doc.render({ products: inputData });
+    const plainProducts = inputData.map((product) => {
+      return product.toObject();
+    });
+    doc.render({
+      products: plainProducts.map((product) => {
+        for (let property in product) {
+          if (product.hasOwnProperty(property)) {
+            if (typeof product[property] === 'number') {
+              product[property] = bigNumberFormat(product[property]);
+            }
+          }
+        }
+        return product;
+      }),
+    });
 
-    filename = `Katalog ŁADS`;
+    filename = `Katalog`;
   } else if (docType === 'annex') {
     const plainProducts = inputData.timber.list.map((product) => {
       return product.toObject();
