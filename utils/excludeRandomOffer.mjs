@@ -1,9 +1,11 @@
+import logToFile from './logToFile.mjs';
 import BigNumber from 'bignumber.js';
 
 const excludeRandomOffer = (offers) => {
   const index = Math.floor(Math.random() * offers.length);
   if (offers.length > 1) {
-    console.log(
+    logToFile(
+      'logger',
       `Spośród ${
         offers.length
       } ofert, którym brakowało najwięcej m3 (${new BigNumber(
@@ -13,7 +15,8 @@ const excludeRandomOffer = (offers) => {
       )} m3), losowo wykluczono ofertę firmy nip: ${offers[index].nip} `
     );
   } else if (offers.length === 1) {
-    console.log(
+    logToFile(
+      'logger',
       `Wykluczono ofertę nip: ${
         offers[index].nip
       }, której brakowało najwięcej m3 (${new BigNumber(

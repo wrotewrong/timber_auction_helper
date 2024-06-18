@@ -38,7 +38,7 @@ const createDoc = (docType, inputFileName, inputData) => {
       osobaReprezentującaNR2: inputData.buyer.secondRepresentative,
       osobaFizycznaAdres: inputData.buyer.homeZipCode,
       osobaFizyczna: inputData.buyer.isNaturalPerson,
-      osobaPrawna: inputData.buyer.isLegalperson,
+      osobaPrawna: inputData.buyer.isLegalPerson,
       dzieńRozpoczęcia: inputData.dates.submissionStart,
       dzieńZakończenia: inputData.dates.submissionEnd,
       ilośćCałkowita: bigNumberFormat(inputData.timber.totalVolume),

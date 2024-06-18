@@ -16,9 +16,9 @@ import {
 import convertDate from '../utils/convertDate.mjs';
 import pickRandomOffer from '../utils/pickRandomOffer.mjs';
 import createDoc from '../utils/createDocMDB.mjs';
-import companiesModel from '../models/companiesModel.mjs';
 import excludeRandomOffer from '../utils/excludeRandomOffer.mjs';
 import generateContractNumber from '../utils/generateContractNumber.mjs';
+import logToFile from '../utils/logToFile.mjs';
 
 export const importCompanies = async (req, res) => {
   try {
@@ -83,7 +83,8 @@ export const estimateWinner = async (req, res) => {
 
     do {
       stepsCounter++;
-      console.log(
+      logToFile(
+        'logger',
         `PRZYPISYWANIE OFERT - ROZPOCZĘCIE - ETAP ${stepsCounter}...`
       );
 
@@ -137,7 +138,7 @@ export const estimateWinner = async (req, res) => {
           );
           await product.save();
         } else {
-          console.log(`LOS nr ${product.productNumber} - brak ofert`);
+          logToFile('logger', `LOS nr ${product.productNumber} - brak ofert`);
         }
       }
 
@@ -207,14 +208,13 @@ export const estimateWinner = async (req, res) => {
       );
 
       belowCompanies.map((company) => {
-        console.log(
-          'Firmy, którym brakuje miąższości:',
-          'nip:',
-          company.nip,
-          'brakuje m3:',
-          new BigNumber(company.minVolume).minus(
+        logToFile(
+          'logger',
+          `Firmy, którym brakuje miąższości: nip: ${
+            company.nip
+          } brakuje m3: ${new BigNumber(company.minVolume).minus(
             new BigNumber(company.volumeWon)
-          )
+          )}`
         );
       });
 
@@ -260,7 +260,8 @@ export const estimateWinner = async (req, res) => {
       if (excludedOffer) {
         for (let offer of databaseOffers) {
           if (offer.nip === excludedOffer.nip && offer.bid > 0) {
-            console.log(
+            logToFile(
+              'logger',
               `Oferta firmy nip: ${offer.nip} na LOS nr ${offer.productNumber} o wartości: ${offer.bid} PLN została wykluczona`
             );
             offer.bid = 0;
@@ -294,9 +295,12 @@ export const estimateWinner = async (req, res) => {
           await company.save();
         }
       }
-      console.log(`PRZYPISYWANIE OFERT - ZAKOŃCZENIE - ETAP ${stepsCounter}`);
+      logToFile(
+        'logger',
+        `PRZYPISYWANIE OFERT - ZAKOŃCZENIE - ETAP ${stepsCounter}`
+      );
     } while (belowCompanies.length > 0);
-    console.log(`PRZYPISYWANIE SKOŃCZONE`);
+    logToFile('logger', `PRZYPISYWANIE SKOŃCZONE`);
 
     res.status(200).json({ message: 'OK' });
   } catch (err) {

@@ -22,6 +22,7 @@ const contractsSchema = new mongoose.Schema({
     totalPrice: { type: Number, required: true },
   },
   dates: {
+    contractDate: { type: String, required: true },
     submissionStart: { type: String, required: true },
     submissionEnd: { type: String, required: true },
     receiptOfProducts: { type: String, required: true },
