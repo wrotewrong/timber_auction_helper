@@ -15,6 +15,7 @@ const app = express();
 app.use(express.static(path.join(__dirname, '/files/output')));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(cors());
 
 app.use(auctionRoutes.getAll);
 app.use(auctionRoutes.getById);
@@ -23,8 +24,6 @@ app.use(auctionRoutes.deleteAuctions);
 
 app.use(catalogRoutes);
 app.use(contractsRoutes);
-
-app.use(cors());
 
 // mongoose.connect('mongodb://localhost:27017/auctionHelper');
 mongoose.connect('mongodb://127.0.0.1:27017/auctionHelper');
