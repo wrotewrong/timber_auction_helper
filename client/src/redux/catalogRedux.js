@@ -1,6 +1,7 @@
 import { API_URL } from '../config';
 
 /* SELECTORS */
+export const getCatalog = ({ catalogRedux }) => catalogRedux.catalog;
 
 /* ACTIONS */
 const createActionName = (actionName) => `app/catalog/${actionName}`;
@@ -27,7 +28,21 @@ export const importCatalogRequest = (catalog) => {
         }
       })
       .then((res) => {
-        dispatch(importCatalog(res.message));
+        dispatch(importCatalog(res?.message));
+      });
+  };
+};
+
+export const getCatalogStatusRequest = (catalog) => {
+  return (dispatch) => {
+    fetch(`${API_URL}/catalog/status`, { method: 'GET' })
+      .then((res) => {
+        if (res.status === 200) {
+          return res.json();
+        }
+      })
+      .then((res) => {
+        dispatch(importCatalog(res?.message));
       });
   };
 };

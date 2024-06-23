@@ -6,8 +6,17 @@ import { Contracts } from './components/pages/Contracts/contracts';
 import { Offers } from './components/pages/Offers/offers';
 import { NotFound } from './components/pages/NotFound/notFound';
 import { Removal } from './components/pages/Removal/removal';
+import { useEffect } from 'react';
+import { useDispatch } from 'react-redux';
+import { getCatalogStatusRequest } from './redux/catalogRedux';
 
 const App = () => {
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(getCatalogStatusRequest());
+  }, [dispatch]);
+
   return (
     <Main>
       <Routes>

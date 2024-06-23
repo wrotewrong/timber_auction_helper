@@ -9,24 +9,43 @@ const __dirname = path.dirname(__filename);
 
 export const importData = async (req, res) => {
   try {
-    const importedProducts = await importExcelDataMDB(
-      'products',
-      'productsDataMDB'
-    )
-      .then((products) => {
-        return products;
-      })
-      .catch((error) => {
-        console.error('Error importing products:', error);
-      });
+    const products = await Products.find();
+    if (products.length === 0) {
+      const importedProducts = await importExcelDataMDB(
+        'products',
+        'productsDataMDB'
+      )
+        .then((products) => {
+          return products;
+        })
+        .catch((error) => {
+          console.error('Error importing products:', error);
+        });
 
-    for (let importedProduct of importedProducts) {
-      const newProduct = new Products(importedProduct);
-      await newProduct.save();
-      console.log(`Product number ${newProduct.productNumber} has been added`);
+      for (let importedProduct of importedProducts) {
+        const newProduct = new Products(importedProduct);
+        await newProduct.save();
+        console.log(
+          `Product number ${newProduct.productNumber} has been added`
+        );
+      }
+
+      res.status(200).json({ message: 'OK' });
+    } else {
+      res.status(200).json({ message: 'Catalog has been already uploaded' });
     }
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+    console.log(err.message);
+  }
+};
 
-    res.status(200).json({ message: 'OK' });
+export const getCatalogStatus = async (req, res) => {
+  try {
+    const products = await Products.find();
+    if (products.length > 0) {
+      res.status(200).json({ message: 'OK' });
+    } else res.status(200).json({ message: '' });
   } catch (err) {
     res.status(500).json({ message: err.message });
     console.log(err.message);
@@ -54,4 +73,8 @@ export const downloadCatalog = async (req, res) => {
   }
 };
 
-export default { importData, downloadCatalog };
+export default {
+  importData,
+  getCatalogStatus,
+  downloadCatalog,
+};
