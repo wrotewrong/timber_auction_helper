@@ -11,10 +11,13 @@ export const Catalog = () => {
       Catalog
       <FileForm fileType={'catalog'}></FileForm>
       {catalog ? (
-        <FileDownloadButton
-          fileEndpointPath={'/catalog/download'}
-          fileName={'Katalog.docx'}
-        ></FileDownloadButton>
+        <div>
+          <p>dodano losy</p>
+          <FileDownloadButton
+            fileEndpointPath={'/catalog/download'}
+            fileName={'Katalog.docx'}
+          ></FileDownloadButton>
+        </div>
       ) : null}
     </div>
   );

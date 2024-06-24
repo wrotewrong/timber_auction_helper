@@ -9,12 +9,18 @@ import { Removal } from './components/pages/Removal/removal';
 import { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { getCatalogStatusRequest } from './redux/catalogRedux';
+import {
+  getOffersStatusRequest,
+  getCompaniesStatusRequest,
+} from './redux/contractsRedux';
 
 const App = () => {
   const dispatch = useDispatch();
 
   useEffect(() => {
     dispatch(getCatalogStatusRequest());
+    dispatch(getOffersStatusRequest());
+    dispatch(getCompaniesStatusRequest());
   }, [dispatch]);
 
   return (

@@ -22,52 +22,86 @@ import logToFile from '../utils/logToFile.mjs';
 
 export const importCompanies = async (req, res) => {
   try {
-    const importedCompanies = await importExcelDataMDB(
-      'companies',
-      'companiesDataMDB'
-    )
-      .then((companies) => {
-        return companies;
-      })
-      .catch((error) => {
-        console.error('Error importing companies:', error);
-      });
+    const companies = await Companies.find();
+    if (companies.length === 0) {
+      const importedCompanies = await importExcelDataMDB(
+        'companies',
+        'companiesDataMDB'
+      )
+        .then((companies) => {
+          return companies;
+        })
+        .catch((error) => {
+          console.error('Error importing companies:', error);
+        });
 
-    for (let company of importedCompanies) {
-      const newCompany = new Companies(company);
-      await newCompany.save();
-      console.log(`Company nip: ${newCompany.nip} has been added`);
+      for (let company of importedCompanies) {
+        const newCompany = new Companies(company);
+        await newCompany.save();
+        console.log(`Company nip: ${newCompany.nip} has been added`);
+      }
+
+      res.status(200).json({ message: 'OK' });
+    } else {
+      res.status(200).json({ message: 'Companies has been already uploaded' });
     }
-
-    res.status(200).json({ message: 'OK' });
   } catch (err) {
     res.status(500).json({ message: err });
     console.log(err);
   }
 };
 
+export const getCompaniesStatus = async (req, res) => {
+  try {
+    const companies = await Companies.find();
+    if (companies.length > 0) {
+      res.status(200).json({ message: 'OK' });
+    } else res.status(200).json({ message: '' });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+    console.log(err.message);
+  }
+};
+
 export const importOffers = async (req, res) => {
   try {
-    const importedOffers = await importExcelDataMDB('offers', 'offersDataMDB')
-      .then((offers) => {
-        return offers;
-      })
-      .catch((error) => {
-        console.error('Error importing offers:', error);
-      });
+    const offers = await Offers.find();
+    if (offers.length === 0) {
+      const importedOffers = await importExcelDataMDB('offers', 'offersDataMDB')
+        .then((offers) => {
+          return offers;
+        })
+        .catch((error) => {
+          console.error('Error importing offers:', error);
+        });
 
-    for (let offer of importedOffers) {
-      const newOffer = new Offers(offer);
-      await newOffer.save();
-      console.log(
-        `Offer by company nip: ${newOffer.nip} for product ${newOffer.productNumber} has been added`
-      );
+      for (let offer of importedOffers) {
+        const newOffer = new Offers(offer);
+        await newOffer.save();
+        console.log(
+          `Offer by company nip: ${newOffer.nip} for product ${newOffer.productNumber} has been added`
+        );
+      }
+
+      res.status(200).json({ message: 'OK' });
+    } else {
+      res.status(200).json({ message: 'Offers has been already uploaded' });
     }
-
-    res.status(200).json({ message: 'OK' });
   } catch (err) {
     res.status(500).json({ message: err });
     console.log(err);
+  }
+};
+
+export const getOffersStatus = async (req, res) => {
+  try {
+    const offers = await Offers.find();
+    if (offers.length > 0) {
+      res.status(200).json({ message: 'OK' });
+    } else res.status(200).json({ message: '' });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+    console.log(err.message);
   }
 };
 
@@ -381,7 +415,9 @@ export const addContracts = async (req, res) => {
 
 export default {
   importOffers,
+  getOffersStatus,
   importCompanies,
+  getCompaniesStatus,
   estimateWinner,
   addContracts,
 };
