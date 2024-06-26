@@ -19,6 +19,7 @@ import createDoc from '../utils/createDocMDB.mjs';
 import excludeRandomOffer from '../utils/excludeRandomOffer.mjs';
 import generateContractNumber from '../utils/generateContractNumber.mjs';
 import logToFile from '../utils/logToFile.mjs';
+import Status from '../models/statusModel.mjs';
 
 export const importCompanies = async (req, res) => {
   try {
@@ -111,232 +112,156 @@ export const estimateWinner = async (req, res) => {
     const databaseProducts = await Products.find();
     const databaseOffers = await Offers.find();
     const databaseCompanies = await Companies.find();
+    const status = await Status.findOne();
 
-    let belowCompanies = [];
-    let stepsCounter = 0;
+    if (!status.winners) {
+      let belowCompanies = [];
+      let stepsCounter = 0;
 
-    do {
-      stepsCounter++;
-      logToFile(
-        'logger',
-        `PRZYPISYWANIE OFERT - ROZPOCZĘCIE - ETAP ${stepsCounter}...`
-      );
-
-      //assigns highest bid to product
-      for (let product of databaseProducts) {
-        const productOffers = databaseOffers.filter(
-          (offer) =>
-            product.productNumber === offer.productNumber && offer.bid > 0
-        );
-        // console.log('productOffers', productOffers);
-
-        if (productOffers.length) {
-          const bids = productOffers.map((offer) => offer.bid);
-          // console.log('bids', bids);
-
-          const maxBid = Math.max(...bids);
-          // console.log('maxBid', maxBid);
-
-          const maxOffers = productOffers.filter(
-            (offer) => offer.bid === maxBid
-          );
-          // console.log('maxOffers', maxOffers);
-
-          const winningOffer = pickRandomOffer(product, maxOffers);
-          // if (maxOffers.length > 1) {
-          //   const losingOffers = maxOffers.filter(
-          //     (offer) => offer.nip !== winningOffer.nip
-          //   );
-          //   // console.log('losingOffers', losingOffers);
-
-          //   for (let databaseOffer of databaseOffers) {
-          //     for (let losingOffer of losingOffers) {
-          //       if (
-          //         databaseOffer.nip === losingOffer.nip &&
-          //         databaseOffer.productNumber === losingOffer.productNumber
-          //       ) {
-          //         console.log(
-          //           `LOS nr ${product.productNumber} - losowo wykluczono ofertę firmy nip: ${databaseOffer.nip}, która zaoferowała ${databaseOffer.bid} PLN`
-          //         );
-          //         databaseOffer.bid = 0;
-          //         await databaseOffer.save();
-          //       }
-          //     }
-          //   }
-          // }
-
-          product.maxOfferCompany = winningOffer.nip;
-          product.maxOfferBid = winningOffer.bid;
-          product.finalPriceTotal = new BigNumber(product.volume).times(
-            new BigNumber(winningOffer.bid)
-          );
-          await product.save();
-        } else {
-          logToFile('logger', `LOS nr ${product.productNumber} - brak ofert`);
-        }
-      }
-
-      // for (let product of databaseProducts) {
-      //   let winningOffers = [];
-      //   for (let offer of databaseOffers) {
-      //     if (
-      //       product.productNumber === offer.productNumber &&
-      //       offer.bid > product.maxOfferBid
-      //     ) {
-      //       winningOffers = [];
-      //       winningOffers.push(offer);
-      //       product.maxOfferCompany = offer.nip;
-      //       product.maxOfferBid = offer.bid;
-      //       product.finalPriceTotal = new BigNumber(product.volume).times(
-      //         new BigNumber(offer.bid)
-      //       );
-      //       console.log(
-      //         `Offer of nip: ${offer.nip} with ${offer.bid} PLN assigned to product ${product.productNumber}`
-      //       );
-      //     } else if (
-      //       product.productNumber === offer.productNumber &&
-      //       offer.bid === product.maxOfferBid
-      //     ) {
-      //       winningOffers.push(offer);
-      //       const finalOffer = pickRandomOffer(winningOffers);
-      //       product.maxOfferCompany = finalOffer.nip;
-      //       product.maxOfferBid = finalOffer.bid;
-      //       product.finalPriceTotal = new BigNumber(product.volume).times(
-      //         new BigNumber(finalOffer.bid)
-      //       );
-      //       console.log(
-      //         `Offer of nip: ${finalOffer.nip} with ${finalOffer.bid} PLN assigned to product ${product.productNumber}`
-      //       );
-      //     } else if (
-      //       product.productNumber === offer.productNumber &&
-      //       offer.bid < product.maxOfferBid
-      //     ) {
-      //       console.log(
-      //         `Offer of nip: ${offer.nip} with ${offer.bid} PLN for product ${product.productNumber} is too low - skip and move to the next offer`
-      //       );
-      //     }
-      //   }
-      //   console.log(`Product ${product.productNumber} saved to the database`);
-      //   await product.save();
-      //   winningOffers = [];
-      // }
-
-      //accumulates volumeWon of company and creates a list of products it has won
-      for (let company of databaseCompanies) {
-        for (let product of databaseProducts) {
-          if (company.nip === product.maxOfferCompany) {
-            company.volumeWon = new BigNumber(company.volumeWon).plus(
-              new BigNumber(product.volume)
-            );
-            company.productsWon.push(product.productNumber);
-          }
-        }
-        await company.save();
-      }
-
-      //finds companies that didnt bought enough volume and picks one with the highest missing volume at random
-      belowCompanies = databaseCompanies.filter(
-        (company) =>
-          company.minVolume - company.volumeWon > 0 &&
-          company.status === 'active'
-      );
-
-      belowCompanies.map((company) => {
+      do {
+        stepsCounter++;
         logToFile(
           'logger',
-          `Firmy, którym brakuje miąższości: nip: ${
-            company.nip
-          } brakuje m3: ${new BigNumber(company.minVolume).minus(
-            new BigNumber(company.volumeWon)
-          )}`
+          `PRZYPISYWANIE OFERT - ROZPOCZĘCIE - ETAP ${stepsCounter}...`
         );
-      });
 
-      let belowCompaniesAllDiffrences = belowCompanies.map((company) =>
-        new BigNumber(company.minVolume).minus(new BigNumber(company.volumeWon))
-      );
-      console.log('belowCompaniesAllDiffrences', belowCompaniesAllDiffrences);
+        //assigns highest bid to product
+        for (let product of databaseProducts) {
+          const productOffers = databaseOffers.filter(
+            (offer) =>
+              product.productNumber === offer.productNumber && offer.bid > 0
+          );
+          // console.log('productOffers', productOffers);
 
-      let belowCompaniesMaxDiffrence = Math.max(...belowCompaniesAllDiffrences);
-      console.log('belowCompaniesMaxDiffrence', belowCompaniesMaxDiffrence);
+          if (productOffers.length) {
+            const bids = productOffers.map((offer) => offer.bid);
+            // console.log('bids', bids);
 
-      let maxBelowCompanies = belowCompanies.filter(
-        (company) =>
-          new BigNumber(company.minVolume).minus(
-            new BigNumber(company.volumeWon)
-          ) == belowCompaniesMaxDiffrence
-      );
-      console.log('maxBelowCompanies', maxBelowCompanies);
+            const maxBid = Math.max(...bids);
+            // console.log('maxBid', maxBid);
 
-      const excludedOffer = excludeRandomOffer(maxBelowCompanies);
-
-      console.log('excludedOffer', excludedOffer);
-
-      for (let company of databaseCompanies) {
-        if (excludedOffer && company.nip === excludedOffer.nip) {
-          company.status = 'excluded';
-          await company.save();
-        }
-      }
-
-      // belowCompanies.sort((a, b) => {
-      //   const aResult = new BigNumber(a.minVolume).minus(
-      //     new BigNumber(a.volumeWon)
-      //   );
-      //   const bResult = new BigNumber(b.minVolume).minus(
-      //     new BigNumber(b.volumeWon)
-      //   );
-
-      //   return bResult.minus(aResult);
-      // });
-
-      //removes the offers of company with the highest minVolume-volumeWon value
-      if (excludedOffer) {
-        for (let offer of databaseOffers) {
-          if (offer.nip === excludedOffer.nip && offer.bid > 0) {
-            logToFile(
-              'logger',
-              `Oferta firmy nip: ${offer.nip} na LOS nr ${offer.productNumber} o wartości: ${offer.bid} PLN została wykluczona`
+            const maxOffers = productOffers.filter(
+              (offer) => offer.bid === maxBid
             );
-            offer.bid = 0;
-            await offer.save();
+            // console.log('maxOffers', maxOffers);
+
+            const winningOffer = pickRandomOffer(product, maxOffers);
+
+            product.maxOfferCompany = winningOffer.nip;
+            product.maxOfferBid = winningOffer.bid;
+            product.finalPriceTotal = new BigNumber(product.volume).times(
+              new BigNumber(winningOffer.bid)
+            );
+            await product.save();
+          } else {
+            logToFile('logger', `LOS nr ${product.productNumber} - brak ofert`);
           }
         }
 
-        // if (belowCompanies.length > 0) {
-        //   for (let offer of databaseOffers) {
-        //     if (offer.nip === belowCompanies[0].nip && offer.bid > 0) {
-        //       console.log(
-        //         `Oferta firmy nip: ${offer.nip} na LOS nr ${offer.productNumber} o wartości: ${offer.bid} PLN została wykluczona`
-        //       );
-        //       offer.bid = 0;
-        //       await offer.save();
-        //     }
-        //   }
-
-        //clears the bid assigned to all product
-        for (let product of databaseProducts) {
-          product.maxOfferCompany = '';
-          product.maxOfferBid = 0;
-          product.finalPriceTotal = 0;
-          await product.save();
-        }
-
-        //clears the volume and products list assigned to all companies
+        //accumulates volumeWon of company and creates a list of products it has won
         for (let company of databaseCompanies) {
-          company.volumeWon = 0;
-          company.productsWon = [];
+          for (let product of databaseProducts) {
+            if (company.nip === product.maxOfferCompany) {
+              company.volumeWon = new BigNumber(company.volumeWon).plus(
+                new BigNumber(product.volume)
+              );
+              company.productsWon.push(product.productNumber);
+            }
+          }
           await company.save();
         }
-      }
-      logToFile(
-        'logger',
-        `PRZYPISYWANIE OFERT - ZAKOŃCZENIE - ETAP ${stepsCounter}`
-      );
-    } while (belowCompanies.length > 0);
-    logToFile('logger', `PRZYPISYWANIE SKOŃCZONE`);
 
-    res.status(200).json({ message: 'OK' });
+        //finds companies that didnt bought enough volume and picks one with the highest missing volume at random
+        belowCompanies = databaseCompanies.filter(
+          (company) =>
+            company.minVolume - company.volumeWon > 0 &&
+            company.status === 'active'
+        );
+
+        belowCompanies.map((company) => {
+          logToFile(
+            'logger',
+            `Firmy, którym brakuje miąższości: nip: ${
+              company.nip
+            } brakuje m3: ${new BigNumber(company.minVolume).minus(
+              new BigNumber(company.volumeWon)
+            )}`
+          );
+        });
+
+        let belowCompaniesAllDiffrences = belowCompanies.map((company) =>
+          new BigNumber(company.minVolume).minus(
+            new BigNumber(company.volumeWon)
+          )
+        );
+        console.log('belowCompaniesAllDiffrences', belowCompaniesAllDiffrences);
+
+        let belowCompaniesMaxDiffrence = Math.max(
+          ...belowCompaniesAllDiffrences
+        );
+        console.log('belowCompaniesMaxDiffrence', belowCompaniesMaxDiffrence);
+
+        let maxBelowCompanies = belowCompanies.filter(
+          (company) =>
+            new BigNumber(company.minVolume).minus(
+              new BigNumber(company.volumeWon)
+            ) == belowCompaniesMaxDiffrence
+        );
+        console.log('maxBelowCompanies', maxBelowCompanies);
+
+        const excludedOffer = excludeRandomOffer(maxBelowCompanies);
+
+        console.log('excludedOffer', excludedOffer);
+
+        for (let company of databaseCompanies) {
+          if (excludedOffer && company.nip === excludedOffer.nip) {
+            company.status = 'excluded';
+            await company.save();
+          }
+        }
+
+        //removes the offers of company with the highest minVolume-volumeWon value
+        if (excludedOffer) {
+          for (let offer of databaseOffers) {
+            if (offer.nip === excludedOffer.nip && offer.bid > 0) {
+              logToFile(
+                'logger',
+                `Oferta firmy nip: ${offer.nip} na LOS nr ${offer.productNumber} o wartości: ${offer.bid} PLN została wykluczona`
+              );
+              offer.bid = 0;
+              await offer.save();
+            }
+          }
+
+          //clears the bid assigned to all product
+          for (let product of databaseProducts) {
+            product.maxOfferCompany = '';
+            product.maxOfferBid = 0;
+            product.finalPriceTotal = 0;
+            await product.save();
+          }
+
+          //clears the volume and products list assigned to all companies
+          for (let company of databaseCompanies) {
+            company.volumeWon = 0;
+            company.productsWon = [];
+            await company.save();
+          }
+        }
+        logToFile(
+          'logger',
+          `PRZYPISYWANIE OFERT - ZAKOŃCZENIE - ETAP ${stepsCounter}`
+        );
+      } while (belowCompanies.length > 0);
+      logToFile('logger', `PRZYPISYWANIE SKOŃCZONE`);
+
+      status.winners = true;
+      await status.save();
+
+      res.status(200).json({ message: 'OK' });
+    } else {
+      res.status(200).json({ message: 'Winners already estimated' });
+    }
   } catch (err) {
     res.status(500).json({ message: err });
     console.log(err);

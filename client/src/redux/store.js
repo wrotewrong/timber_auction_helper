@@ -4,11 +4,13 @@ import { thunk } from 'redux-thunk';
 // import reducers
 import catalogRedux from './catalogRedux';
 import contractsRedux from './contractsRedux';
+import statusRedux from './statusRedux';
 
 // combine reducers
 const rootReducer = combineReducers({
   catalogRedux,
   contractsRedux,
+  statusRedux,
 });
 
 const composeEnhancers =

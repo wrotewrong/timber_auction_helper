@@ -2,6 +2,7 @@ import express from 'express';
 import auctionRoutes from './routes/auctions.route.mjs';
 import catalogRoutes from './routes/catalog.route.mjs';
 import contractsRoutes from './routes/contracts.routes.mjs';
+import statusRoutes from './routes/status.route.mjs';
 import mongoose from 'mongoose';
 import cors from 'cors';
 import path from 'path';
@@ -24,6 +25,7 @@ app.use(auctionRoutes.deleteAuctions);
 
 app.use(catalogRoutes);
 app.use(contractsRoutes);
+app.use(statusRoutes);
 
 // mongoose.connect('mongodb://localhost:27017/auctionHelper');
 mongoose.connect('mongodb://127.0.0.1:27017/auctionHelper');

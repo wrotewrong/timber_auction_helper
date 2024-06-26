@@ -13,11 +13,13 @@ import {
   getOffersStatusRequest,
   getCompaniesStatusRequest,
 } from './redux/contractsRedux';
+import { importStatusRequest } from './redux/statusRedux';
 
 const App = () => {
   const dispatch = useDispatch();
 
   useEffect(() => {
+    dispatch(importStatusRequest());
     dispatch(getCatalogStatusRequest());
     dispatch(getOffersStatusRequest());
     dispatch(getCompaniesStatusRequest());
