@@ -8,11 +8,10 @@ export const Catalog = () => {
 
   return (
     <div>
-      Catalog
       <FileForm fileType={'catalog'}></FileForm>
-      {catalog ? (
+      {catalog?.products?.length > 0 ? (
         <div>
-          <p>dodano losy</p>
+          <p>{`losy dodane: ${catalog?.products?.length}`}</p>
           <FileDownloadButton
             fileEndpointPath={'/catalog/download'}
             fileName={'Katalog.docx'}

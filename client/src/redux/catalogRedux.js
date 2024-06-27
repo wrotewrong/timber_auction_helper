@@ -1,48 +1,44 @@
 import { API_URL } from '../config';
 
 /* SELECTORS */
-export const getCatalog = ({ catalogRedux }) => catalogRedux.catalog;
+export const getCatalog = ({ catalogRedux }) => catalogRedux.data;
 
 /* ACTIONS */
 const createActionName = (actionName) => `app/catalog/${actionName}`;
-export const IMPORT_CATALOG = createActionName('IMPORT_CATALOG');
+export const LOAD_CATALOG = createActionName('LOAD_CATALOG');
 
 /* ACTION CREATORS */
-export const importCatalog = (payload) => ({ payload, type: IMPORT_CATALOG });
+export const loadCatalog = (payload) => ({ payload, type: LOAD_CATALOG });
 
 /* THUNKS */
+export const loadCatalogRequest = () => {
+  return async (dispatch) => {
+    await fetch(`${API_URL}/catalog`, { method: 'GET' })
+      .then((res) => res.json())
+      .then((res) => {
+        dispatch(loadCatalog(res));
+      });
+  };
+};
+
 export const importCatalogRequest = (catalog) => {
   const fd = new FormData();
   fd.append('uploadedFile', catalog);
 
-  return (dispatch) => {
+  return async (dispatch) => {
     const options = {
       method: 'POST',
       body: fd,
     };
 
-    fetch(`${API_URL}/catalog/import`, options)
+    await fetch(`${API_URL}/catalog/import`, options)
       .then((res) => {
         if (res.status === 200) {
           return res.json();
         }
       })
       .then((res) => {
-        dispatch(importCatalog(res?.message));
-      });
-  };
-};
-
-export const getCatalogStatusRequest = (catalog) => {
-  return (dispatch) => {
-    fetch(`${API_URL}/catalog/status`, { method: 'GET' })
-      .then((res) => {
-        if (res.status === 200) {
-          return res.json();
-        }
-      })
-      .then((res) => {
-        dispatch(importCatalog(res?.message));
+        dispatch(loadCatalog(res));
       });
   };
 };
@@ -50,15 +46,15 @@ export const getCatalogStatusRequest = (catalog) => {
 /* INITIAL STATE */
 
 const initialState = {
-  catalog: '',
+  data: {},
 };
 
 /* REDUCER */
 
 export default function reducer(statePart = initialState, action = {}) {
   switch (action.type) {
-    case IMPORT_CATALOG:
-      return { ...statePart, catalog: action.payload };
+    case LOAD_CATALOG:
+      return { ...statePart, data: action.payload };
     default:
       return statePart;
   }

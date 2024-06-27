@@ -9,7 +9,7 @@ router.post(
   fileUpload.single('uploadedFile'),
   catalogController.importData
 );
-router.get('/catalog/status', catalogController.getCatalogStatus);
+router.get('/catalog', catalogController.getCatalog);
 router.get('/catalog/download', catalogController.downloadCatalog);
 
 export default router;

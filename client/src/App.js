@@ -8,7 +8,7 @@ import { NotFound } from './components/pages/NotFound/notFound';
 import { Removal } from './components/pages/Removal/removal';
 import { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
-import { getCatalogStatusRequest } from './redux/catalogRedux';
+import { loadCatalogRequest } from './redux/catalogRedux';
 import {
   getOffersStatusRequest,
   getCompaniesStatusRequest,
@@ -20,7 +20,7 @@ const App = () => {
 
   useEffect(() => {
     dispatch(importStatusRequest());
-    dispatch(getCatalogStatusRequest());
+    dispatch(loadCatalogRequest());
     dispatch(getOffersStatusRequest());
     dispatch(getCompaniesStatusRequest());
   }, [dispatch]);

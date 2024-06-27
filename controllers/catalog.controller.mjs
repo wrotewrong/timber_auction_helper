@@ -7,9 +7,23 @@ import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-export const importData = async (req, res) => {
+export const getCatalog = async (req, res) => {
   try {
     const products = await Products.find();
+    if (products.length > 0) {
+      res.status(200).json({ message: 'OK', products });
+    } else {
+      res.status(400).json({ message: 'Catalog not found' });
+    }
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+    console.log(err.message);
+  }
+};
+
+export const importData = async (req, res) => {
+  try {
+    let products = await Products.find();
     if (products.length === 0) {
       const importedProducts = await importExcelDataMDB(
         'products',
@@ -29,23 +43,10 @@ export const importData = async (req, res) => {
           `Product number ${newProduct.productNumber} has been added`
         );
       }
-
-      res.status(200).json({ message: 'OK' });
-    } else {
-      res.status(200).json({ message: 'Catalog has been already uploaded' });
+      products = await Products.find();
     }
-  } catch (err) {
-    res.status(500).json({ message: err.message });
-    console.log(err.message);
-  }
-};
 
-export const getCatalogStatus = async (req, res) => {
-  try {
-    const products = await Products.find();
-    if (products.length > 0) {
-      res.status(200).json({ message: 'OK' });
-    } else res.status(200).json({ message: '' });
+    res.status(200).json({ message: 'OK', products });
   } catch (err) {
     res.status(500).json({ message: err.message });
     console.log(err.message);
@@ -74,7 +75,7 @@ export const downloadCatalog = async (req, res) => {
 };
 
 export default {
+  getCatalog,
   importData,
-  getCatalogStatus,
   downloadCatalog,
 };
