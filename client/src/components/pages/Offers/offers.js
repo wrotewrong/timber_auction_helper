@@ -22,9 +22,13 @@ export const Offers = () => {
   return (
     <div>
       Oferty: <FileForm fileType={'offers'}></FileForm>
-      {offers ? <p>dodano oferty</p> : null}
+      {offers?.offers?.length > 0 ? (
+        <p>{`oferty dodane: ${offers?.offers?.length}`}</p>
+      ) : null}
       Kontrahenci: <FileForm fileType={'companies'}></FileForm>
-      {companies ? <p>dodano kontrahentów</p> : null}
+      {companies?.companies?.length > 0 ? (
+        <p>{`kontrahenci dodani: ${companies?.companies?.length}`}</p>
+      ) : null}
       <button onClick={estimateWinner}>Przypisz zwycięzców</button>
       {status?.winners ? <p>określono zwycięzców</p> : null}
     </div>

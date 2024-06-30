@@ -23,7 +23,7 @@ import Status from '../models/statusModel.mjs';
 
 export const importCompanies = async (req, res) => {
   try {
-    const companies = await Companies.find();
+    let companies = await Companies.find();
     if (companies.length === 0) {
       const importedCompanies = await importExcelDataMDB(
         'companies',
@@ -41,23 +41,21 @@ export const importCompanies = async (req, res) => {
         await newCompany.save();
         console.log(`Company nip: ${newCompany.nip} has been added`);
       }
-
-      res.status(200).json({ message: 'OK' });
-    } else {
-      res.status(200).json({ message: 'Companies has been already uploaded' });
+      companies = await Companies.find();
     }
+    res.status(200).json({ message: 'OK', companies });
   } catch (err) {
     res.status(500).json({ message: err });
     console.log(err);
   }
 };
 
-export const getCompaniesStatus = async (req, res) => {
+export const getCompanies = async (req, res) => {
   try {
     const companies = await Companies.find();
     if (companies.length > 0) {
-      res.status(200).json({ message: 'OK' });
-    } else res.status(200).json({ message: '' });
+      res.status(200).json({ message: 'OK', companies });
+    } else res.status(400).json({ message: 'Companies not found' });
   } catch (err) {
     res.status(500).json({ message: err.message });
     console.log(err.message);
@@ -66,7 +64,7 @@ export const getCompaniesStatus = async (req, res) => {
 
 export const importOffers = async (req, res) => {
   try {
-    const offers = await Offers.find();
+    let offers = await Offers.find();
     if (offers.length === 0) {
       const importedOffers = await importExcelDataMDB('offers', 'offersDataMDB')
         .then((offers) => {
@@ -83,23 +81,21 @@ export const importOffers = async (req, res) => {
           `Offer by company nip: ${newOffer.nip} for product ${newOffer.productNumber} has been added`
         );
       }
-
-      res.status(200).json({ message: 'OK' });
-    } else {
-      res.status(200).json({ message: 'Offers has been already uploaded' });
+      offers = await Offers.find();
     }
+    res.status(200).json({ message: 'OK', offers });
   } catch (err) {
     res.status(500).json({ message: err });
     console.log(err);
   }
 };
 
-export const getOffersStatus = async (req, res) => {
+export const getOffers = async (req, res) => {
   try {
     const offers = await Offers.find();
     if (offers.length > 0) {
-      res.status(200).json({ message: 'OK' });
-    } else res.status(200).json({ message: '' });
+      res.status(200).json({ message: 'OK', offers });
+    } else res.status(400).json({ message: 'Offers not found' });
   } catch (err) {
     res.status(500).json({ message: err.message });
     console.log(err.message);
@@ -340,9 +336,9 @@ export const addContracts = async (req, res) => {
 
 export default {
   importOffers,
-  getOffersStatus,
+  getOffers,
   importCompanies,
-  getCompaniesStatus,
+  getCompanies,
   estimateWinner,
   addContracts,
 };
