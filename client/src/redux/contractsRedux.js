@@ -4,6 +4,7 @@ import { importStatusRequest } from './statusRedux';
 /* SELECTORS */
 export const getOffers = ({ contractsRedux }) => contractsRedux.offers;
 export const getCompanies = ({ contractsRedux }) => contractsRedux.companies;
+export const getContracts = ({ contractsRedux }) => contractsRedux.contracts;
 
 /* ACTIONS */
 const createActionName = (actionName) => `app/offers/${actionName}`;
@@ -12,14 +13,10 @@ export const LOAD_OFFERS = createActionName('LOAD_OFFERS');
 export const IMPORT_COMPANIES = createActionName('IMPORT_COMPANIES');
 export const LOAD_COMPANIES = createActionName('LOAD_COMPANIES');
 export const ESTIMATE_WINNER = createActionName('ESTIMATE_WINNER');
+export const LOAD_CONTRACTS = createActionName('LOAD_CONTRACTS');
 
 /* ACTION CREATORS */
-// export const importOffers = (payload) => ({ payload, type: IMPORT_OFFERS });
 export const loadOffers = (payload) => ({ payload, type: LOAD_OFFERS });
-// export const importCompanies = (payload) => ({
-//   payload,
-//   type: IMPORT_COMPANIES,
-// });
 export const loadCompanies = (payload) => ({
   payload,
   type: LOAD_COMPANIES,
@@ -27,6 +24,10 @@ export const loadCompanies = (payload) => ({
 export const estimateWinner = (payload) => ({
   payload,
   type: ESTIMATE_WINNER,
+});
+export const loadContracts = (payload) => ({
+  payload,
+  type: LOAD_CONTRACTS,
 });
 
 /* THUNKS */
@@ -60,20 +61,6 @@ export const importOffersRequest = (offers) => {
   };
 };
 
-// export const getOffersStatusRequest = () => {
-//   return (dispatch) => {
-//     fetch(`${API_URL}/contracts/offersStatus`, { method: 'GET' })
-//       .then((res) => {
-//         if (res.status === 200) {
-//           return res.json();
-//         }
-//       })
-//       .then((res) => {
-//         dispatch(importOffers(res?.message));
-//       });
-//   };
-// };
-
 export const loadCompaniesRequest = () => {
   return async (dispatch) => {
     await fetch(`${API_URL}/contracts/companies`, { method: 'GET' })
@@ -104,23 +91,9 @@ export const importCompaniesRequest = (companies) => {
   };
 };
 
-// export const getCompaniesStatusRequest = () => {
-//   return (dispatch) => {
-//     fetch(`${API_URL}/contracts/companiesStatus`, { method: 'GET' })
-//       .then((res) => {
-//         if (res.status === 200) {
-//           return res.json();
-//         }
-//       })
-//       .then((res) => {
-//         dispatch(importCompanies(res?.message));
-//       });
-//   };
-// };
-
 export const estimateWinnerRequest = () => {
-  return (dispatch) => {
-    fetch(`${API_URL}/contracts/estimate`, { method: 'GET' })
+  return async (dispatch) => {
+    await fetch(`${API_URL}/contracts/estimate`, { method: 'GET' })
       .then((res) => {
         if (res.status === 200) {
           return res.json();
@@ -133,26 +106,46 @@ export const estimateWinnerRequest = () => {
   };
 };
 
+export const addContracts = () => {
+  return async (dispatch) => {
+    await fetch(`${API_URL}/contracts/add`, { method: 'POST' })
+      .then((res) => {
+        if (res.status === 200) {
+          return res.json();
+        }
+      })
+      .then((res) => {
+        dispatch(loadContracts(res));
+      });
+  };
+};
+
+export const loadContractsRequest = () => {
+  return async (dispatch) => {
+    await fetch(`${API_URL}/contracts`, { method: 'GET' })
+      .then((res) => res.json())
+      .then((res) => dispatch(loadContracts(res)));
+  };
+};
+
 /* INITIAL STATE */
 
 const initialState = {
   offers: {},
   companies: {},
-  contractStatus: '',
+  contracts: {},
 };
 
 /* REDUCER */
 
 export default function reducer(statePart = initialState, action = {}) {
   switch (action.type) {
-    // case IMPORT_OFFERS:
-    //   return { ...statePart, offers: action.payload };
     case LOAD_OFFERS:
       return { ...statePart, offers: action.payload };
-    // case IMPORT_COMPANIES:
-    //   return { ...statePart, companies: action.payload };
     case LOAD_COMPANIES:
       return { ...statePart, companies: action.payload };
+    case LOAD_CONTRACTS:
+      return { ...statePart, contracts: action.payload };
     case ESTIMATE_WINNER:
       return { ...statePart, contractStatus: action.payload };
     default:

@@ -266,71 +266,88 @@ export const estimateWinner = async (req, res) => {
 
 export const addContracts = async (req, res) => {
   try {
-    const databaseCompanies = await Companies.find().populate({
-      path: 'productsWon',
-      model: 'Products',
-      localField: 'productsWon',
-      foreignField: 'productNumber',
-    });
+    const contracts = await Contracts.find();
 
-    let contractCounter = 0;
-    for (let company of databaseCompanies) {
-      if (company.productsWon.length > 0) {
-        contractCounter++;
-        const newContract = new Contracts({
-          number: generateContractNumber(contractCounter),
-          buyer: {
-            nip: company.nip,
-            name: company.name,
-            zipCode: company.zipCode,
-            homeZipCode: company.homeZipCode,
-            courtZipCode: company.courtZipCode,
-            krsNumber: company.krsNumber,
-            regonNumber: company.regonNumber,
-            bdoNumber: company.bdoNumber || 'nie dotyczy',
-            firstRepresentative: company.firstRepresentative,
-            secondRepresentative: company.secondRepresentative || 'nie dotyczy',
-            isLegalPerson: company.isLegalPerson ? true : false,
-            isNaturalPerson: company.isNaturalPerson ? true : false,
-          },
-          timber: {
-            list: [...company.productsWon],
-            totalVolume: company.volumeWon,
-            totalPrice: company.productsWon.reduce(
-              (a, b) => new BigNumber(a).plus(new BigNumber(b.finalPriceTotal)),
-              new BigNumber(0)
-            ),
-          },
-          dates: {
-            contractDate: convertDate(contractDate),
-            submissionStart: convertDate(submissionStart),
-            submissionEnd: convertDate(submissionEnd),
-            receiptOfProducts: convertDate(receiptOfProducts),
-            salesStart: convertDate(salesStart),
-            salesEnd: convertDate(salesEnd),
-          },
-        });
-        await newContract.save();
-        console.log(
-          `Contract of the company nip: ${newContract.buyer.nip} has been added`
-        );
+    if (contracts.length === 0) {
+      const databaseCompanies = await Companies.find().populate({
+        path: 'productsWon',
+        model: 'Products',
+        localField: 'productsWon',
+        foreignField: 'productNumber',
+      });
+
+      let contractCounter = 0;
+      for (let company of databaseCompanies) {
+        if (company.productsWon.length > 0) {
+          contractCounter++;
+          const newContract = new Contracts({
+            number: generateContractNumber(contractCounter),
+            buyer: {
+              nip: company.nip,
+              name: company.name,
+              zipCode: company.zipCode,
+              homeZipCode: company.homeZipCode,
+              courtZipCode: company.courtZipCode,
+              krsNumber: company.krsNumber,
+              regonNumber: company.regonNumber,
+              bdoNumber: company.bdoNumber || 'nie dotyczy',
+              firstRepresentative: company.firstRepresentative,
+              secondRepresentative:
+                company.secondRepresentative || 'nie dotyczy',
+              isLegalPerson: company.isLegalPerson ? true : false,
+              isNaturalPerson: company.isNaturalPerson ? true : false,
+            },
+            timber: {
+              list: [...company.productsWon],
+              totalVolume: company.volumeWon,
+              totalPrice: company.productsWon.reduce(
+                (a, b) =>
+                  new BigNumber(a).plus(new BigNumber(b.finalPriceTotal)),
+                new BigNumber(0)
+              ),
+            },
+            dates: {
+              contractDate: convertDate(contractDate),
+              submissionStart: convertDate(submissionStart),
+              submissionEnd: convertDate(submissionEnd),
+              receiptOfProducts: convertDate(receiptOfProducts),
+              salesStart: convertDate(salesStart),
+              salesEnd: convertDate(salesEnd),
+            },
+          });
+          await newContract.save();
+          console.log(
+            `Contract of the company nip: ${newContract.buyer.nip} has been added`
+          );
+        }
+      }
+
+      const contracts = await Contracts.find().populate({
+        path: 'timber.list',
+        model: 'Products',
+      });
+
+      for (let contract of contracts) {
+        createDoc('contract', 'inputUmowa', contract);
+        createDoc('annex', 'inputAnnex', contract);
       }
     }
-
-    const contracts = await Contracts.find().populate({
-      path: 'timber.list',
-      model: 'Products',
-    });
-
-    for (let contract of contracts) {
-      createDoc('contract', 'inputUmowa', contract);
-      createDoc('annex', 'inputAnnex', contract);
-    }
-
-    res.status(200).json({ message: 'OK' });
+    res.status(200).json({ message: 'OK', contracts });
   } catch (err) {
     res.status(500).json({ message: err });
     console.log(err);
+  }
+};
+
+export const getContracts = async (req, res) => {
+  try {
+    const contracts = await Contracts.find();
+    if (contracts.length > 0) {
+      res.status(200).json({ message: 'OK', contracts });
+    } else res.status(400).json({ message: 'Contracts not found' });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+    console.log(err.message);
   }
 };
 
@@ -341,4 +358,5 @@ export default {
   getCompanies,
   estimateWinner,
   addContracts,
+  getContracts,
 };

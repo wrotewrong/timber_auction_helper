@@ -10,10 +10,9 @@ import { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { loadCatalogRequest } from './redux/catalogRedux';
 import {
-  // getOffersStatusRequest,
-  // getCompaniesStatusRequest,
   loadOffersRequest,
   loadCompaniesRequest,
+  loadContractsRequest,
 } from './redux/contractsRedux';
 import { importStatusRequest } from './redux/statusRedux';
 
@@ -25,8 +24,7 @@ const App = () => {
     dispatch(loadCatalogRequest());
     dispatch(loadOffersRequest());
     dispatch(loadCompaniesRequest());
-    // dispatch(getOffersStatusRequest());
-    // dispatch(getCompaniesStatusRequest());
+    dispatch(loadContractsRequest());
   }, [dispatch]);
 
   return (
