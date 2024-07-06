@@ -16,13 +16,15 @@ export const Contracts = () => {
       Contracts
       <button onClick={createContracts}>Stwórz umowy</button>
       {contracts?.contracts?.length > 0 ? (
-        <p>{`sporządzono umów: ${contracts?.contracts?.length}, dla:`}</p>
+        <>
+          <p>{`sporządzono umów: ${contracts?.contracts?.length}, dla:`}</p>
+          <ul>
+            {contracts?.contracts?.map((contract) => (
+              <li key={contract.buyer.nip}>{contract.buyer.name}</li>
+            ))}
+          </ul>
+        </>
       ) : null}
-      <ul>
-        {contracts?.contracts?.map((contract) => (
-          <li>{contract.buyer.name}</li>
-        ))}
-      </ul>
     </div>
   );
 };

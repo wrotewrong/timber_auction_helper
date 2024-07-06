@@ -20,6 +20,13 @@ import excludeRandomOffer from '../utils/excludeRandomOffer.mjs';
 import generateContractNumber from '../utils/generateContractNumber.mjs';
 import logToFile from '../utils/logToFile.mjs';
 import Status from '../models/statusModel.mjs';
+import zipFiles from '../utils/zipFiles.mjs';
+
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 export const importCompanies = async (req, res) => {
   try {
@@ -266,7 +273,7 @@ export const estimateWinner = async (req, res) => {
 
 export const addContracts = async (req, res) => {
   try {
-    const contracts = await Contracts.find();
+    let contracts = await Contracts.find();
 
     if (contracts.length === 0) {
       const databaseCompanies = await Companies.find().populate({
@@ -322,7 +329,7 @@ export const addContracts = async (req, res) => {
         }
       }
 
-      const contracts = await Contracts.find().populate({
+      contracts = await Contracts.find().populate({
         path: 'timber.list',
         model: 'Products',
       });
