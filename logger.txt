@@ -1,0 +1,134 @@
+
+7.7.2024 16:37:56 - PRZYPISYWANIE OFERT - ROZPOCZĘCIE - ETAP 1...
+7.7.2024 16:37:56 - LOS nr 1 - wybrano najwyższą ofertę firmy nip: 5252516964, która zaoferowała: 2000 PLN
+7.7.2024 16:37:56 - LOS nr 2 - wybrano najwyższą ofertę firmy nip: 7720100638, która zaoferowała: 3000 PLN
+7.7.2024 16:37:56 - LOS nr 3 - wybrano najwyższą ofertę firmy nip: 8982126450, która zaoferowała: 4000 PLN
+7.7.2024 16:37:56 - LOS nr 4 - wybrano najwyższą ofertę firmy nip: 1111111111, która zaoferowała: 4000 PLN
+7.7.2024 16:37:56 - LOS nr 5 - wybrano najwyższą ofertę firmy nip: 2222222222, która zaoferowała: 3000 PLN
+7.7.2024 16:37:56 - LOS nr 6 - brak ofert
+7.7.2024 16:37:56 - LOS nr 7 - losowo wybrano ofertę firmy nip: 3333333333, która zaoferowała: 3000 PLN (spośród 3 takich samych ofert)
+7.7.2024 16:37:56 - LOS nr 8 - losowo wybrano ofertę firmy nip: 3333333333, która zaoferowała: 2000 PLN (spośród 2 takich samych ofert)
+7.7.2024 16:37:56 - LOS nr 9 - brak ofert
+7.7.2024 16:37:56 - LOS nr 10 - brak ofert
+7.7.2024 16:37:56 - LOS nr 11 - brak ofert
+7.7.2024 16:37:56 - LOS nr 12 - brak ofert
+7.7.2024 16:37:56 - LOS nr 13 - brak ofert
+7.7.2024 16:37:56 - LOS nr 14 - brak ofert
+7.7.2024 16:37:56 - LOS nr 15 - brak ofert
+7.7.2024 16:37:56 - LOS nr 16 - brak ofert
+7.7.2024 16:37:56 - LOS nr 17 - brak ofert
+7.7.2024 16:37:56 - LOS nr 18 - brak ofert
+7.7.2024 16:37:56 - LOS nr 19 - brak ofert
+7.7.2024 16:37:56 - Firmy, którym brakuje miąższości: nip: 5252516964 brakuje m3: 0.5
+7.7.2024 16:37:56 - Firmy, którym brakuje miąższości: nip: 7720100638 brakuje m3: 1
+7.7.2024 16:37:56 - Firmy, którym brakuje miąższości: nip: 8982126450 brakuje m3: 2
+7.7.2024 16:37:56 - Firmy, którym brakuje miąższości: nip: 1111111111 brakuje m3: 0.1
+7.7.2024 16:37:56 - Firmy, którym brakuje miąższości: nip: 4444444444 brakuje m3: 5
+7.7.2024 16:37:56 - Wykluczono ofertę nip: 4444444444, której brakowało najwięcej m3 (5 m3)
+7.7.2024 16:37:56 - Oferta firmy nip: 4444444444 na LOS nr 7 o wartości: 3000 PLN została wykluczona
+7.7.2024 16:37:56 - Oferta firmy nip: 4444444444 na LOS nr 8 o wartości: 2000 PLN została wykluczona
+7.7.2024 16:37:56 - PRZYPISYWANIE OFERT - ZAKOŃCZENIE - ETAP 1
+7.7.2024 16:37:56 - PRZYPISYWANIE OFERT - ROZPOCZĘCIE - ETAP 2...
+7.7.2024 16:37:56 - LOS nr 1 - wybrano najwyższą ofertę firmy nip: 5252516964, która zaoferowała: 2000 PLN
+7.7.2024 16:37:56 - LOS nr 2 - wybrano najwyższą ofertę firmy nip: 7720100638, która zaoferowała: 3000 PLN
+7.7.2024 16:37:56 - LOS nr 3 - wybrano najwyższą ofertę firmy nip: 8982126450, która zaoferowała: 4000 PLN
+7.7.2024 16:37:56 - LOS nr 4 - wybrano najwyższą ofertę firmy nip: 1111111111, która zaoferowała: 4000 PLN
+7.7.2024 16:37:56 - LOS nr 5 - wybrano najwyższą ofertę firmy nip: 2222222222, która zaoferowała: 3000 PLN
+7.7.2024 16:37:56 - LOS nr 6 - brak ofert
+7.7.2024 16:37:56 - LOS nr 7 - losowo wybrano ofertę firmy nip: 2222222222, która zaoferowała: 3000 PLN (spośród 2 takich samych ofert)
+7.7.2024 16:37:56 - LOS nr 8 - wybrano najwyższą ofertę firmy nip: 3333333333, która zaoferowała: 2000 PLN
+7.7.2024 16:37:56 - LOS nr 9 - brak ofert
+7.7.2024 16:37:56 - LOS nr 10 - brak ofert
+7.7.2024 16:37:56 - LOS nr 11 - brak ofert
+7.7.2024 16:37:56 - LOS nr 12 - brak ofert
+7.7.2024 16:37:56 - LOS nr 13 - brak ofert
+7.7.2024 16:37:56 - LOS nr 14 - brak ofert
+7.7.2024 16:37:56 - LOS nr 15 - brak ofert
+7.7.2024 16:37:56 - LOS nr 16 - brak ofert
+7.7.2024 16:37:56 - LOS nr 17 - brak ofert
+7.7.2024 16:37:56 - LOS nr 18 - brak ofert
+7.7.2024 16:37:56 - LOS nr 19 - brak ofert
+7.7.2024 16:37:56 - Firmy, którym brakuje miąższości: nip: 5252516964 brakuje m3: 0.5
+7.7.2024 16:37:56 - Firmy, którym brakuje miąższości: nip: 7720100638 brakuje m3: 1
+7.7.2024 16:37:56 - Firmy, którym brakuje miąższości: nip: 8982126450 brakuje m3: 2
+7.7.2024 16:37:56 - Firmy, którym brakuje miąższości: nip: 1111111111 brakuje m3: 0.1
+7.7.2024 16:37:56 - Firmy, którym brakuje miąższości: nip: 3333333333 brakuje m3: 1
+7.7.2024 16:37:56 - Wykluczono ofertę nip: 8982126450, której brakowało najwięcej m3 (2 m3)
+7.7.2024 16:37:56 - Oferta firmy nip: 8982126450 na LOS nr 2 o wartości: 2000 PLN została wykluczona
+7.7.2024 16:37:56 - Oferta firmy nip: 8982126450 na LOS nr 3 o wartości: 4000 PLN została wykluczona
+7.7.2024 16:37:56 - Oferta firmy nip: 8982126450 na LOS nr 4 o wartości: 2000 PLN została wykluczona
+7.7.2024 16:37:56 - PRZYPISYWANIE OFERT - ZAKOŃCZENIE - ETAP 2
+7.7.2024 16:37:56 - PRZYPISYWANIE OFERT - ROZPOCZĘCIE - ETAP 3...
+7.7.2024 16:37:56 - LOS nr 1 - wybrano najwyższą ofertę firmy nip: 5252516964, która zaoferowała: 2000 PLN
+7.7.2024 16:37:56 - LOS nr 2 - wybrano najwyższą ofertę firmy nip: 7720100638, która zaoferowała: 3000 PLN
+7.7.2024 16:37:56 - LOS nr 3 - wybrano najwyższą ofertę firmy nip: 5252516964, która zaoferowała: 3000 PLN
+7.7.2024 16:37:56 - LOS nr 4 - wybrano najwyższą ofertę firmy nip: 1111111111, która zaoferowała: 4000 PLN
+7.7.2024 16:37:56 - LOS nr 5 - wybrano najwyższą ofertę firmy nip: 2222222222, która zaoferowała: 3000 PLN
+7.7.2024 16:37:56 - LOS nr 6 - brak ofert
+7.7.2024 16:37:56 - LOS nr 7 - losowo wybrano ofertę firmy nip: 3333333333, która zaoferowała: 3000 PLN (spośród 2 takich samych ofert)
+7.7.2024 16:37:56 - LOS nr 8 - wybrano najwyższą ofertę firmy nip: 3333333333, która zaoferowała: 2000 PLN
+7.7.2024 16:37:56 - LOS nr 9 - brak ofert
+7.7.2024 16:37:56 - LOS nr 10 - brak ofert
+7.7.2024 16:37:56 - LOS nr 11 - brak ofert
+7.7.2024 16:37:56 - LOS nr 12 - brak ofert
+7.7.2024 16:37:56 - LOS nr 13 - brak ofert
+7.7.2024 16:37:56 - LOS nr 14 - brak ofert
+7.7.2024 16:37:56 - LOS nr 15 - brak ofert
+7.7.2024 16:37:56 - LOS nr 16 - brak ofert
+7.7.2024 16:37:56 - LOS nr 17 - brak ofert
+7.7.2024 16:37:56 - LOS nr 18 - brak ofert
+7.7.2024 16:37:56 - LOS nr 19 - brak ofert
+7.7.2024 16:37:56 - Firmy, którym brakuje miąższości: nip: 7720100638 brakuje m3: 1
+7.7.2024 16:37:56 - Firmy, którym brakuje miąższości: nip: 1111111111 brakuje m3: 0.1
+7.7.2024 16:37:56 - Wykluczono ofertę nip: 7720100638, której brakowało najwięcej m3 (1 m3)
+7.7.2024 16:37:56 - Oferta firmy nip: 7720100638 na LOS nr 1 o wartości: 1500 PLN została wykluczona
+7.7.2024 16:37:56 - Oferta firmy nip: 7720100638 na LOS nr 2 o wartości: 3000 PLN została wykluczona
+7.7.2024 16:37:56 - Oferta firmy nip: 7720100638 na LOS nr 4 o wartości: 3000 PLN została wykluczona
+7.7.2024 16:37:56 - PRZYPISYWANIE OFERT - ZAKOŃCZENIE - ETAP 3
+7.7.2024 16:37:56 - PRZYPISYWANIE OFERT - ROZPOCZĘCIE - ETAP 4...
+7.7.2024 16:37:56 - LOS nr 1 - wybrano najwyższą ofertę firmy nip: 5252516964, która zaoferowała: 2000 PLN
+7.7.2024 16:37:56 - LOS nr 2 - wybrano najwyższą ofertę firmy nip: 1111111111, która zaoferowała: 1500 PLN
+7.7.2024 16:37:56 - LOS nr 3 - wybrano najwyższą ofertę firmy nip: 5252516964, która zaoferowała: 3000 PLN
+7.7.2024 16:37:56 - LOS nr 4 - wybrano najwyższą ofertę firmy nip: 1111111111, która zaoferowała: 4000 PLN
+7.7.2024 16:37:56 - LOS nr 5 - wybrano najwyższą ofertę firmy nip: 2222222222, która zaoferowała: 3000 PLN
+7.7.2024 16:37:57 - LOS nr 6 - brak ofert
+7.7.2024 16:37:57 - LOS nr 7 - losowo wybrano ofertę firmy nip: 2222222222, która zaoferowała: 3000 PLN (spośród 2 takich samych ofert)
+7.7.2024 16:37:57 - LOS nr 8 - wybrano najwyższą ofertę firmy nip: 3333333333, która zaoferowała: 2000 PLN
+7.7.2024 16:37:57 - LOS nr 9 - brak ofert
+7.7.2024 16:37:57 - LOS nr 10 - brak ofert
+7.7.2024 16:37:57 - LOS nr 11 - brak ofert
+7.7.2024 16:37:57 - LOS nr 12 - brak ofert
+7.7.2024 16:37:57 - LOS nr 13 - brak ofert
+7.7.2024 16:37:57 - LOS nr 14 - brak ofert
+7.7.2024 16:37:57 - LOS nr 15 - brak ofert
+7.7.2024 16:37:57 - LOS nr 16 - brak ofert
+7.7.2024 16:37:57 - LOS nr 17 - brak ofert
+7.7.2024 16:37:57 - LOS nr 18 - brak ofert
+7.7.2024 16:37:57 - LOS nr 19 - brak ofert
+7.7.2024 16:37:57 - Firmy, którym brakuje miąższości: nip: 3333333333 brakuje m3: 1
+7.7.2024 16:37:57 - Wykluczono ofertę nip: 3333333333, której brakowało najwięcej m3 (1 m3)
+7.7.2024 16:37:57 - Oferta firmy nip: 3333333333 na LOS nr 7 o wartości: 3000 PLN została wykluczona
+7.7.2024 16:37:57 - Oferta firmy nip: 3333333333 na LOS nr 8 o wartości: 2000 PLN została wykluczona
+7.7.2024 16:37:57 - PRZYPISYWANIE OFERT - ZAKOŃCZENIE - ETAP 4
+7.7.2024 16:37:57 - PRZYPISYWANIE OFERT - ROZPOCZĘCIE - ETAP 5...
+7.7.2024 16:37:57 - LOS nr 1 - wybrano najwyższą ofertę firmy nip: 5252516964, która zaoferowała: 2000 PLN
+7.7.2024 16:37:57 - LOS nr 2 - wybrano najwyższą ofertę firmy nip: 1111111111, która zaoferowała: 1500 PLN
+7.7.2024 16:37:57 - LOS nr 3 - wybrano najwyższą ofertę firmy nip: 5252516964, która zaoferowała: 3000 PLN
+7.7.2024 16:37:57 - LOS nr 4 - wybrano najwyższą ofertę firmy nip: 1111111111, która zaoferowała: 4000 PLN
+7.7.2024 16:37:57 - LOS nr 5 - wybrano najwyższą ofertę firmy nip: 2222222222, która zaoferowała: 3000 PLN
+7.7.2024 16:37:57 - LOS nr 6 - brak ofert
+7.7.2024 16:37:57 - LOS nr 7 - wybrano najwyższą ofertę firmy nip: 2222222222, która zaoferowała: 3000 PLN
+7.7.2024 16:37:57 - LOS nr 8 - wybrano najwyższą ofertę firmy nip: 2222222222, która zaoferowała: 1500 PLN
+7.7.2024 16:37:57 - LOS nr 9 - brak ofert
+7.7.2024 16:37:57 - LOS nr 10 - brak ofert
+7.7.2024 16:37:57 - LOS nr 11 - brak ofert
+7.7.2024 16:37:57 - LOS nr 12 - brak ofert
+7.7.2024 16:37:57 - LOS nr 13 - brak ofert
+7.7.2024 16:37:57 - LOS nr 14 - brak ofert
+7.7.2024 16:37:57 - LOS nr 15 - brak ofert
+7.7.2024 16:37:57 - LOS nr 16 - brak ofert
+7.7.2024 16:37:57 - LOS nr 17 - brak ofert
+7.7.2024 16:37:57 - LOS nr 18 - brak ofert
+7.7.2024 16:37:57 - LOS nr 19 - brak ofert
+7.7.2024 16:37:57 - PRZYPISYWANIE OFERT - ZAKOŃCZENIE - ETAP 5
+7.7.2024 16:37:57 - PRZYPISYWANIE SKOŃCZONE

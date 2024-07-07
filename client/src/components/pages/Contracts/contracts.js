@@ -1,5 +1,6 @@
 import { useDispatch, useSelector } from 'react-redux';
 import { addContracts, getContracts } from '../../../redux/contractsRedux';
+import { FileDownloadButton } from '../../features/FileDownloadButton/FileDownloadButton';
 
 export const Contracts = () => {
   const contracts = useSelector(getContracts);
@@ -7,7 +8,6 @@ export const Contracts = () => {
   const dispatch = useDispatch();
 
   const createContracts = () => {
-    console.log('works');
     dispatch(addContracts());
   };
 
@@ -23,6 +23,10 @@ export const Contracts = () => {
               <li key={contract.buyer.nip}>{contract.buyer.name}</li>
             ))}
           </ul>
+          <FileDownloadButton
+            fileEndpointPath={'/contracts/zip'}
+            fileName={'umowy.zip'}
+          ></FileDownloadButton>
         </>
       ) : null}
     </div>

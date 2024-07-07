@@ -338,6 +338,7 @@ export const addContracts = async (req, res) => {
         createDoc('contract', 'inputUmowa', contract);
         createDoc('annex', 'inputAnnex', contract);
       }
+      zipFiles();
     }
     res.status(200).json({ message: 'OK', contracts });
   } catch (err) {
@@ -358,6 +359,26 @@ export const getContracts = async (req, res) => {
   }
 };
 
+export const downloadContracts = async (req, res) => {
+  try {
+    const filename = 'umowy';
+    const filePath = path.join(__dirname, `../files/output/umowy.zip`);
+    res.setHeader(
+      'Content-Disposition',
+      `attachment; filename="${encodeURIComponent(filename)}"`
+    );
+    res.status(200).sendFile(filePath, (err) => {
+      if (err) {
+        console.error('Error sending file:', err);
+        res.status(500).send('Error sending file');
+      }
+    });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+    console.log(err.message);
+  }
+};
+
 export default {
   importOffers,
   getOffers,
@@ -366,4 +387,5 @@ export default {
   estimateWinner,
   addContracts,
   getContracts,
+  downloadContracts,
 };
