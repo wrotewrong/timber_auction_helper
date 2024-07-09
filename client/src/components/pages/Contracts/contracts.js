@@ -26,6 +26,7 @@ export const Contracts = () => {
           <FileDownloadButton
             fileEndpointPath={'/contracts/zip'}
             fileName={'umowy.zip'}
+            buttonName={'umowy'}
           ></FileDownloadButton>
         </>
       ) : null}

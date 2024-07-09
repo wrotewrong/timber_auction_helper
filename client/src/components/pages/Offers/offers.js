@@ -7,6 +7,7 @@ import {
 } from '../../../redux/contractsRedux';
 import { useDispatch } from 'react-redux';
 import { getStatus } from '../../../redux/statusRedux';
+import { FileDownloadButton } from '../../features/FileDownloadButton/FileDownloadButton';
 
 export const Offers = () => {
   const offers = useSelector(getOffers);
@@ -30,7 +31,16 @@ export const Offers = () => {
         <p>{`kontrahenci dodani: ${companies?.companies?.length}`}</p>
       ) : null}
       <button onClick={estimateWinner}>Przypisz zwycięzców</button>
-      {status?.winners ? <p>określono zwycięzców</p> : null}
+      {status?.winners ? (
+        <>
+          <p>określono zwycięzców</p>
+          <FileDownloadButton
+            fileEndpointPath={'/contracts/logger'}
+            fileName={'logger.txt'}
+            buttonName={'podsumowanie'}
+          ></FileDownloadButton>
+        </>
+      ) : null}
     </div>
   );
 };

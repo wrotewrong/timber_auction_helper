@@ -27,7 +27,7 @@ export const FileDownloadButton = (props) => {
 
   return (
     <div>
-      <button onClick={handleDownload}>Pobierz</button>
+      <button onClick={handleDownload}>{`Pobierz ` + props.buttonName}</button>
     </div>
   );
 };

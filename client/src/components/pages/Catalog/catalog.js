@@ -15,6 +15,7 @@ export const Catalog = () => {
           <FileDownloadButton
             fileEndpointPath={'/catalog/download'}
             fileName={'Katalog.docx'}
+            buttonName={'katalog'}
           ></FileDownloadButton>
         </div>
       ) : null}

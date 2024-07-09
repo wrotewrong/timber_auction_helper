@@ -379,6 +379,26 @@ export const downloadContracts = async (req, res) => {
   }
 };
 
+export const downloadLogger = async (req, res) => {
+  try {
+    const filename = 'logger';
+    const filePath = path.join(__dirname, `../files/output/logger.txt`);
+    res.setHeader(
+      'Content-Disposition',
+      `attachment; filename="${encodeURIComponent(filename)}"`
+    );
+    res.status(200).sendFile(filePath, (err) => {
+      if (err) {
+        console.error('Error sending file:', err);
+        res.status(500).send('Error sending file');
+      }
+    });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+    console.log(err.message);
+  }
+};
+
 export default {
   importOffers,
   getOffers,
@@ -388,4 +408,5 @@ export default {
   addContracts,
   getContracts,
   downloadContracts,
+  downloadLogger,
 };
