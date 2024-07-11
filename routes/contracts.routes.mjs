@@ -21,5 +21,6 @@ router.get('/contracts/estimate', contractsController.estimateWinner);
 router.post('/contracts/add', contractsController.addContracts);
 router.get('/contracts/zip', contractsController.downloadContracts);
 router.get('/contracts/logger', contractsController.downloadLogger);
+router.delete('/contracts', contractsController.removeAllContractsData);
 
 export default router;

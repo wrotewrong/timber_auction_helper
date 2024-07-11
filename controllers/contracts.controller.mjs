@@ -21,6 +21,7 @@ import generateContractNumber from '../utils/generateContractNumber.mjs';
 import logToFile from '../utils/logToFile.mjs';
 import Status from '../models/statusModel.mjs';
 import zipFiles from '../utils/zipFiles.mjs';
+import fs from 'fs';
 
 import path from 'path';
 import { fileURLToPath } from 'url';
@@ -399,6 +400,67 @@ export const downloadLogger = async (req, res) => {
   }
 };
 
+export const removeAllContractsData = async (req, res) => {
+  try {
+    let offers = await Offers.find();
+    let companies = await Companies.find();
+    let contracts = await Contracts.find();
+    const inputFiles = fs.readdirSync(path.join(__dirname, '../files/input/'));
+    // console.log('inputFiles', inputFiles);
+    const contractsInputFiles = inputFiles.filter((file) =>
+      file.includes('offers') || file.includes('companies') ? file : ''
+    );
+    // console.log('contractsInputFiles', contractsInputFiles);
+    const outputFiles = fs.readdirSync(
+      path.join(__dirname, '../files/output/')
+    );
+    // console.log('outputFiles', outputFiles);
+    const contractsOutputFiles = outputFiles.filter((file) =>
+      file.includes('nip') || file.includes('logger') || file.includes('umowy')
+        ? file
+        : ''
+    );
+    // console.log('contractsOutputFiles', contractsOutputFiles);
+
+    if (
+      offers.length > 0 ||
+      companies.length > 0 ||
+      contracts.length > 0 ||
+      contractsInputFiles.length > 0 ||
+      contractsOutputFiles.length > 0
+    ) {
+      await Offers.deleteMany();
+      await Companies.deleteMany();
+      await Contracts.deleteMany();
+
+      offers = await Offers.find();
+      companies = await Companies.find();
+      contracts = await Contracts.find();
+
+      if (contractsInputFiles.length > 0) {
+        contractsInputFiles.forEach((file) => {
+          fs.unlinkSync(path.join(__dirname, '../files/input/', file));
+        });
+      }
+
+      if (contractsOutputFiles.length > 0) {
+        contractsOutputFiles.forEach((file) => {
+          fs.unlinkSync(path.join(__dirname, '../files/output/', file));
+        });
+      }
+
+      res.status(200).json({ message: 'OK', offers, companies, contracts });
+      console.log('Offers, companies and contracts data have been removed');
+    } else {
+      res.status(400).json({ message: 'Not found...' });
+      console.log('Offers, companies and contracts data do not exist');
+    }
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+    console.log(err.message);
+  }
+};
+
 export default {
   importOffers,
   getOffers,
@@ -409,4 +471,5 @@ export default {
   getContracts,
   downloadContracts,
   downloadLogger,
+  removeAllContractsData,
 };

@@ -14,7 +14,7 @@ const logToFile = (file, text) => {
 
   try {
     fs.appendFileSync(filePath, content);
-    console.log(`added text to ${file}`);
+    // console.log(`added text to ${file}`);
   } catch (err) {
     console.error(err);
   }

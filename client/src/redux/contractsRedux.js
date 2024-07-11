@@ -14,6 +14,7 @@ export const IMPORT_COMPANIES = createActionName('IMPORT_COMPANIES');
 export const LOAD_COMPANIES = createActionName('LOAD_COMPANIES');
 export const ESTIMATE_WINNER = createActionName('ESTIMATE_WINNER');
 export const LOAD_CONTRACTS = createActionName('LOAD_CONTRACTS');
+export const DELETE_DATA = createActionName('DELETE_DATA');
 
 /* ACTION CREATORS */
 export const loadOffers = (payload) => ({ payload, type: LOAD_OFFERS });
@@ -28,6 +29,10 @@ export const estimateWinner = (payload) => ({
 export const loadContracts = (payload) => ({
   payload,
   type: LOAD_CONTRACTS,
+});
+export const deleteAllContractsData = (payload) => ({
+  payload,
+  type: DELETE_DATA,
 });
 
 /* THUNKS */
@@ -128,6 +133,20 @@ export const loadContractsRequest = () => {
   };
 };
 
+export const deleteAllContractsDataRequest = () => {
+  return async (dispatch) => {
+    await fetch(`${API_URL}/contracts`, { method: 'DELETE' })
+      .then((res) => {
+        if (res.status === 200) {
+          return res.json();
+        }
+      })
+      .then((res) => {
+        dispatch(deleteAllContractsData(res));
+      });
+  };
+};
+
 /* INITIAL STATE */
 
 const initialState = {
@@ -148,6 +167,22 @@ export default function reducer(statePart = initialState, action = {}) {
       return { ...statePart, contracts: action.payload };
     case ESTIMATE_WINNER:
       return { ...statePart, contractStatus: action.payload };
+    case DELETE_DATA:
+      return {
+        ...statePart,
+        offers: {
+          message: action.payload.message,
+          offers: action.payload.offers,
+        },
+        companies: {
+          message: action.payload.message,
+          companies: action.payload.companies,
+        },
+        contracts: {
+          message: action.payload.message,
+          contracts: action.payload.contracts,
+        },
+      };
     default:
       return statePart;
   }
