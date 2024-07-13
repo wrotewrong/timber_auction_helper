@@ -11,5 +11,6 @@ router.post(
 );
 router.get('/catalog', catalogController.getCatalog);
 router.get('/catalog/download', catalogController.downloadCatalog);
+router.delete('/catalog', catalogController.removeAllCatalogData);
 
 export default router;

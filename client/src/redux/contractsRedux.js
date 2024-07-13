@@ -137,9 +137,7 @@ export const deleteAllContractsDataRequest = () => {
   return async (dispatch) => {
     await fetch(`${API_URL}/contracts`, { method: 'DELETE' })
       .then((res) => {
-        if (res.status === 200) {
-          return res.json();
-        }
+        return res.json();
       })
       .then((res) => {
         dispatch(deleteAllContractsData(res));

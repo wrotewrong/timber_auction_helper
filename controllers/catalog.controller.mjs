@@ -3,6 +3,7 @@ import importExcelDataMDB from '../utils/importExcelDataMDB.mjs';
 import createDoc from '../utils/createDocMDB.mjs';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import fs from 'fs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -74,8 +75,60 @@ export const downloadCatalog = async (req, res) => {
   }
 };
 
+export const removeAllCatalogData = async (req, res) => {
+  try {
+    let products = await Products.find();
+    const inputFiles = fs.readdirSync(path.join(__dirname, '../files/input/'));
+    console.log('inputFiles', inputFiles);
+    const catalogInputFiles = inputFiles.filter((file) =>
+      file.includes('products') ? file : ''
+    );
+    console.log('catalogInputFiles', catalogInputFiles);
+    const outputFiles = fs.readdirSync(
+      path.join(__dirname, '../files/output/')
+    );
+    console.log('outputFiles', outputFiles);
+    const catalogOutputFiles = outputFiles.filter((file) =>
+      file.includes('Katalog') ? file : ''
+    );
+    console.log('catalogOutputFiles', catalogOutputFiles);
+
+    if (
+      products.length > 0 ||
+      catalogInputFiles.length > 0 ||
+      catalogOutputFiles.length > 0
+    ) {
+      await Products.deleteMany();
+
+      products = await Products.find();
+
+      if (catalogInputFiles.length > 0) {
+        catalogInputFiles.forEach((file) => {
+          fs.unlinkSync(path.join(__dirname, '../files/input/', file));
+        });
+      }
+
+      if (catalogOutputFiles.length > 0) {
+        catalogOutputFiles.forEach((file) => {
+          fs.unlinkSync(path.join(__dirname, '../files/output/', file));
+        });
+      }
+
+      res.status(200).json({ message: 'OK', products });
+      console.log('Catalog data has been removed');
+    } else {
+      res.status(400).json({ message: 'Not found...' });
+      console.log('Catalog data does not exist');
+    }
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+    console.log(err.message);
+  }
+};
+
 export default {
   getCatalog,
   importData,
   downloadCatalog,
+  removeAllCatalogData,
 };
