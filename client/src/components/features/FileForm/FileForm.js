@@ -15,11 +15,17 @@ export const FileForm = (props) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (props.fileType === 'catalog') {
+    if (props.fileType === 'catalog' && file?.name === 'productsDataMDB.xlsx') {
       dispatch(importCatalogRequest(file));
-    } else if (props.fileType === 'offers') {
+    } else if (
+      props.fileType === 'offers' &&
+      file?.name === 'offersDataMDB.xlsx'
+    ) {
       dispatch(importOffersRequest(file));
-    } else if (props.fileType === 'companies') {
+    } else if (
+      props.fileType === 'companies' &&
+      file?.name === 'companiesDataMDB.xlsx'
+    ) {
       dispatch(importCompaniesRequest(file));
     }
   };
@@ -31,6 +37,7 @@ export const FileForm = (props) => {
           <Form.Label>Załącz plik excel</Form.Label>
           <Form.Control
             type='file'
+            accept='.xlsx'
             onChange={(e) => setFile(e.target.files[0])}
           ></Form.Control>
         </Form.Group>

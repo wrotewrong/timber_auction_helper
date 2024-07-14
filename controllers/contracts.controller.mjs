@@ -118,7 +118,12 @@ export const estimateWinner = async (req, res) => {
     const databaseCompanies = await Companies.find();
     const status = await Status.findOne();
 
-    if (!status.winners) {
+    if (
+      databaseProducts.length > 0 &&
+      databaseOffers.length > 0 &&
+      databaseCompanies.length > 0 &&
+      !status.winners
+    ) {
       let belowCompanies = [];
       let stepsCounter = 0;
 
@@ -264,7 +269,7 @@ export const estimateWinner = async (req, res) => {
 
       res.status(200).json({ message: 'OK' });
     } else {
-      res.status(200).json({ message: 'Winners already estimated' });
+      res.status(400).json({ message: 'Winners already estimated' });
     }
   } catch (err) {
     res.status(500).json({ message: err });
@@ -406,21 +411,17 @@ export const removeAllContractsData = async (req, res) => {
     let companies = await Companies.find();
     let contracts = await Contracts.find();
     const inputFiles = fs.readdirSync(path.join(__dirname, '../files/input/'));
-    // console.log('inputFiles', inputFiles);
     const contractsInputFiles = inputFiles.filter((file) =>
       file.includes('offers') || file.includes('companies') ? file : ''
     );
-    // console.log('contractsInputFiles', contractsInputFiles);
     const outputFiles = fs.readdirSync(
       path.join(__dirname, '../files/output/')
     );
-    // console.log('outputFiles', outputFiles);
     const contractsOutputFiles = outputFiles.filter((file) =>
       file.includes('nip') || file.includes('logger') || file.includes('umowy')
         ? file
         : ''
     );
-    // console.log('contractsOutputFiles', contractsOutputFiles);
 
     if (
       offers.length > 0 ||
@@ -449,7 +450,14 @@ export const removeAllContractsData = async (req, res) => {
         });
       }
 
-      res.status(200).json({ message: 'OK', offers, companies, contracts });
+      let status = await Status.findOne();
+      status.winners = false;
+      await status.save();
+      status = await Status.findOne();
+
+      res
+        .status(200)
+        .json({ message: 'OK', offers, companies, contracts, status });
       console.log('Offers, companies and contracts data have been removed');
     } else {
       res.status(400).json({ message: 'Not found...' });

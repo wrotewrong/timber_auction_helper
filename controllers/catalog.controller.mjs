@@ -79,19 +79,15 @@ export const removeAllCatalogData = async (req, res) => {
   try {
     let products = await Products.find();
     const inputFiles = fs.readdirSync(path.join(__dirname, '../files/input/'));
-    console.log('inputFiles', inputFiles);
     const catalogInputFiles = inputFiles.filter((file) =>
       file.includes('products') ? file : ''
     );
-    console.log('catalogInputFiles', catalogInputFiles);
     const outputFiles = fs.readdirSync(
       path.join(__dirname, '../files/output/')
     );
-    console.log('outputFiles', outputFiles);
     const catalogOutputFiles = outputFiles.filter((file) =>
       file.includes('Katalog') ? file : ''
     );
-    console.log('catalogOutputFiles', catalogOutputFiles);
 
     if (
       products.length > 0 ||
