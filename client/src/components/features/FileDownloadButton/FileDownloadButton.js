@@ -1,4 +1,5 @@
 import { API_URL } from '../../../config';
+import Button from 'react-bootstrap/esm/Button';
 
 export const FileDownloadButton = (props) => {
   const handleDownload = (e) => {
@@ -27,7 +28,13 @@ export const FileDownloadButton = (props) => {
 
   return (
     <div>
-      <button onClick={handleDownload}>{`Pobierz ` + props.buttonName}</button>
+      <Button
+        onClick={handleDownload}
+        className='mt-3'
+        variant='outline-success'
+      >
+        {`Pobierz ` + props.buttonName}
+      </Button>
     </div>
   );
 };

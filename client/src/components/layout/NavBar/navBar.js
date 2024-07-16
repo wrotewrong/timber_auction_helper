@@ -4,21 +4,21 @@ import Navbar from 'react-bootstrap/Navbar';
 
 export const NavBar = () => {
   return (
-    <Navbar>
-      <Nav>
-        <Nav.Link as={NavLink} to='/'>
+    <Navbar bg='success' variant='dark' className='mb-4 rounded text-center'>
+      <Nav className='mx-auto fs-5'>
+        <Nav.Link className='px-3' as={NavLink} to='/'>
           Strona Główna
         </Nav.Link>
-        <Nav.Link as={NavLink} to='/catalog'>
+        <Nav.Link className='px-3' as={NavLink} to='/catalog'>
           Katalog
         </Nav.Link>
-        <Nav.Link as={NavLink} to='/offers'>
+        <Nav.Link className='px-3' as={NavLink} to='/offers'>
           Oferty
         </Nav.Link>
-        <Nav.Link as={NavLink} to='/contracts'>
+        <Nav.Link className='px-3' as={NavLink} to='/contracts'>
           Umowy
         </Nav.Link>
-        <Nav.Link as={NavLink} to='/removal'>
+        <Nav.Link className='px-3' as={NavLink} to='/removal'>
           Usunięcie
         </Nav.Link>
       </Nav>

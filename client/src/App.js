@@ -15,6 +15,7 @@ import {
   loadContractsRequest,
 } from './redux/contractsRedux';
 import { importStatusRequest } from './redux/statusRedux';
+import Container from 'react-bootstrap/Container';
 
 const App = () => {
   const dispatch = useDispatch();
@@ -28,16 +29,18 @@ const App = () => {
   }, [dispatch]);
 
   return (
-    <Main>
-      <Routes>
-        <Route path='/' element={<Home />} />
-        <Route path='/catalog' element={<Catalog />} />
-        <Route path='/offers' element={<Offers />} />
-        <Route path='/contracts' element={<Contracts />} />
-        <Route path='/removal' element={<Removal />} />
-        <Route path='*' element={<NotFound />} />
-      </Routes>
-    </Main>
+    <Container>
+      <Main>
+        <Routes>
+          <Route path='/' element={<Home />} />
+          <Route path='/catalog' element={<Catalog />} />
+          <Route path='/offers' element={<Offers />} />
+          <Route path='/contracts' element={<Contracts />} />
+          <Route path='/removal' element={<Removal />} />
+          <Route path='*' element={<NotFound />} />
+        </Routes>
+      </Main>
+    </Container>
   );
 };
 

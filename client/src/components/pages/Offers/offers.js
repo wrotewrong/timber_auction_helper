@@ -8,10 +8,13 @@ import {
 import { useDispatch } from 'react-redux';
 import { getStatus } from '../../../redux/statusRedux';
 import { FileDownloadButton } from '../../features/FileDownloadButton/FileDownloadButton';
+import Button from 'react-bootstrap/esm/Button';
+import { getCatalog } from '../../../redux/catalogRedux';
 
 export const Offers = () => {
   const offers = useSelector(getOffers);
   const companies = useSelector(getCompanies);
+  const catalog = useSelector(getCatalog);
   const status = useSelector(getStatus);
   const dispatch = useDispatch();
 
@@ -22,25 +25,50 @@ export const Offers = () => {
 
   return (
     <div>
-      Oferty: <FileForm fileType={'offers'}></FileForm>
-      {offers?.offers?.length > 0 ? (
-        <p>{`oferty dodane: ${offers?.offers?.length}`}</p>
-      ) : null}
-      Kontrahenci: <FileForm fileType={'companies'}></FileForm>
-      {companies?.companies?.length > 0 ? (
-        <p>{`kontrahenci dodani: ${companies?.companies?.length}`}</p>
-      ) : null}
-      <button onClick={estimateWinner}>Przypisz zwycięzców</button>
-      {status?.winners ? (
-        <>
-          <p>określono zwycięzców</p>
-          <FileDownloadButton
-            fileEndpointPath={'/contracts/logger'}
-            fileName={'logger.txt'}
-            buttonName={'podsumowanie'}
-          ></FileDownloadButton>
-        </>
-      ) : null}
+      <div className='container text-center'>
+        <row className='d-flex justify-content-center'>
+          <div className='col-4 me-4'>
+            <p className='fw-bold fs-4 mb-0'>Załącz plik z ofertami:</p>
+            <FileForm fileType={'offers'}></FileForm>
+            {offers?.offers?.length > 0 ? (
+              <p className='fw-bold text-success'>{`oferty dodane: ${offers?.offers?.length}`}</p>
+            ) : null}
+          </div>
+          <div className='col-4 ms-4'>
+            <p className='fw-bold fs-4 mb-0'>Załącz plik z kontrahentami:</p>
+            <FileForm fileType={'companies'}></FileForm>
+            {companies?.companies?.length > 0 ? (
+              <p className='fw-bold text-success'>{`kontrahenci dodani: ${companies?.companies?.length}`}</p>
+            ) : null}
+          </div>
+        </row>
+
+        <row className='d-flex justify-content-center pt-5'>
+          <div className='col-6'>
+            {offers?.offers?.length > 0 &&
+            companies?.companies?.length > 0 &&
+            catalog?.products?.length > 0 ? (
+              <>
+                <p className='fw-bold fs-4'>Przypisz kontrahentów do losów:</p>
+                <Button variant='outline-success' onClick={estimateWinner}>
+                  Przypisz kontrahentów
+                </Button>
+              </>
+            ) : null}
+
+            {status?.winners ? (
+              <>
+                <p className='fw-bold text-success'>przypisano kontrahentów</p>
+                <FileDownloadButton
+                  fileEndpointPath={'/contracts/logger'}
+                  fileName={'logger.txt'}
+                  buttonName={'podsumowanie'}
+                ></FileDownloadButton>
+              </>
+            ) : null}
+          </div>
+        </row>
+      </div>
     </div>
   );
 };

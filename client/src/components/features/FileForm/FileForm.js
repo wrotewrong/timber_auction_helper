@@ -31,19 +31,19 @@ export const FileForm = (props) => {
   };
 
   return (
-    <div>
-      <Form onSubmit={handleSubmit}>
-        <Form.Group controlId='formAdd'>
-          <Form.Label>Załącz plik excel</Form.Label>
-          <Form.Control
-            type='file'
-            accept='.xlsx'
-            onChange={(e) => setFile(e.target.files[0])}
-          ></Form.Control>
-        </Form.Group>
+    <Form onSubmit={handleSubmit} bg='success'>
+      <Form.Group controlId='formAdd'>
+        <Form.Control
+          className='border border-success'
+          type='file'
+          accept='.xlsx'
+          onChange={(e) => setFile(e.target.files[0])}
+        ></Form.Control>
+      </Form.Group>
 
-        <Button type='submit'>Wyślij Dane</Button>
-      </Form>
-    </div>
+      <Button variant='outline-success' className='mt-3' type='submit'>
+        Wyślij plik
+      </Button>
+    </Form>
   );
 };
