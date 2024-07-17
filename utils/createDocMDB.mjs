@@ -5,6 +5,7 @@ import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import bigNumberFormat from '../utils/bigNumberFormat.mjs';
+import speciesToGerman from './speciesToGerman.mjs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -57,6 +58,9 @@ const createDoc = (docType, inputFileName, inputData) => {
       products: plainProducts.map((product) => {
         for (let property in product) {
           if (product.hasOwnProperty(property)) {
+            if (property === 'species') {
+              product[property] = speciesToGerman(product[property]);
+            }
             if (typeof product[property] === 'number') {
               product[property] = bigNumberFormat(product[property]);
             }
