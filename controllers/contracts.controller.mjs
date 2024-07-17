@@ -113,6 +113,8 @@ export const getOffers = async (req, res) => {
 //estimateWinner method - eliminate companies offers based on the value: minVolume-volumeWon
 export const estimateWinner = async (req, res) => {
   try {
+    console.log('estimating started');
+
     const databaseProducts = await Products.find();
     const databaseOffers = await Offers.find();
     const databaseCompanies = await Companies.find();
@@ -203,12 +205,12 @@ export const estimateWinner = async (req, res) => {
             new BigNumber(company.volumeWon)
           )
         );
-        console.log('belowCompaniesAllDiffrences', belowCompaniesAllDiffrences);
+        // console.log('belowCompaniesAllDiffrences', belowCompaniesAllDiffrences);
 
         let belowCompaniesMaxDiffrence = Math.max(
           ...belowCompaniesAllDiffrences
         );
-        console.log('belowCompaniesMaxDiffrence', belowCompaniesMaxDiffrence);
+        // console.log('belowCompaniesMaxDiffrence', belowCompaniesMaxDiffrence);
 
         let maxBelowCompanies = belowCompanies.filter(
           (company) =>
@@ -216,11 +218,11 @@ export const estimateWinner = async (req, res) => {
               new BigNumber(company.volumeWon)
             ) == belowCompaniesMaxDiffrence
         );
-        console.log('maxBelowCompanies', maxBelowCompanies);
+        // console.log('maxBelowCompanies', maxBelowCompanies);
 
         const excludedOffer = excludeRandomOffer(maxBelowCompanies);
 
-        console.log('excludedOffer', excludedOffer);
+        // console.log('excludedOffer', excludedOffer);
 
         for (let company of databaseCompanies) {
           if (excludedOffer && company.nip === excludedOffer.nip) {
@@ -261,8 +263,10 @@ export const estimateWinner = async (req, res) => {
           'logger',
           `PRZYPISYWANIE OFERT - ZAKOŃCZENIE - ETAP ${stepsCounter}`
         );
+        console.log(`step ${stepsCounter} finished`);
       } while (belowCompanies.length > 0);
       logToFile('logger', `PRZYPISYWANIE SKOŃCZONE`);
+      console.log('estimating finished');
 
       status.winners = true;
       await status.save();
@@ -300,15 +304,20 @@ export const addContracts = async (req, res) => {
               name: company.name,
               zipCode: company.zipCode,
               homeZipCode: company.homeZipCode,
+              homeZipCodeSecond: company.homeZipCodeSecond,
+              homeZipCodeThird: company.homeZipCodeThird,
               courtZipCode: company.courtZipCode,
+              courtDepartment: company.courtDepartment,
               krsNumber: company.krsNumber,
               regonNumber: company.regonNumber,
               bdoNumber: company.bdoNumber || 'nie dotyczy',
               firstRepresentative: company.firstRepresentative,
-              secondRepresentative:
-                company.secondRepresentative || 'nie dotyczy',
+              secondRepresentative: company.secondRepresentative,
+              thirdRepresentative: company.thirdRepresentative,
               isLegalPerson: company.isLegalPerson ? true : false,
               isNaturalPerson: company.isNaturalPerson ? true : false,
+              isPartnership: company.isPartnership ? true : false,
+              vat: company.vat,
             },
             timber: {
               list: [...company.productsWon],
