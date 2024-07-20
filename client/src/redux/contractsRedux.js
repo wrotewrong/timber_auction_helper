@@ -1,5 +1,6 @@
 import { API_URL } from '../config';
 import { importStatusRequest } from './statusRedux';
+import { startRequest, endRequest } from './requestRedux';
 
 /* SELECTORS */
 export const getOffers = ({ contractsRedux }) => contractsRedux.offers;
@@ -38,9 +39,13 @@ export const deleteAllContractsData = (payload) => ({
 /* THUNKS */
 export const loadOffersRequest = () => {
   return async (dispatch) => {
+    dispatch(startRequest({ name: 'OFFERS_REQUEST' }));
     await fetch(`${API_URL}/contracts/offers`, { method: 'GET' })
       .then((res) => res.json())
-      .then((res) => dispatch(loadOffers(res)));
+      .then((res) => {
+        dispatch(loadOffers(res));
+        dispatch(endRequest({ name: 'OFFERS_REQUEST' }));
+      });
   };
 };
 
@@ -49,6 +54,7 @@ export const importOffersRequest = (offers) => {
   fd.append('uploadedFile', offers);
 
   return async (dispatch) => {
+    dispatch(startRequest({ name: 'OFFERS_REQUEST' }));
     const options = {
       method: 'POST',
       body: fd,
@@ -62,15 +68,20 @@ export const importOffersRequest = (offers) => {
       })
       .then((res) => {
         dispatch(loadOffers(res));
+        dispatch(endRequest({ name: 'OFFERS_REQUEST' }));
       });
   };
 };
 
 export const loadCompaniesRequest = () => {
   return async (dispatch) => {
+    dispatch(startRequest({ name: 'OFFERS_REQUEST' }));
     await fetch(`${API_URL}/contracts/companies`, { method: 'GET' })
       .then((res) => res.json())
-      .then((res) => dispatch(loadCompanies(res)));
+      .then((res) => {
+        dispatch(loadCompanies(res));
+        dispatch(endRequest({ name: 'OFFERS_REQUEST' }));
+      });
   };
 };
 
@@ -79,6 +90,7 @@ export const importCompaniesRequest = (companies) => {
   fd.append('uploadedFile', companies);
 
   return async (dispatch) => {
+    dispatch(startRequest({ name: 'OFFERS_REQUEST' }));
     const options = {
       method: 'POST',
       body: fd,
@@ -92,12 +104,14 @@ export const importCompaniesRequest = (companies) => {
       })
       .then((res) => {
         dispatch(loadCompanies(res));
+        dispatch(endRequest({ name: 'OFFERS_REQUEST' }));
       });
   };
 };
 
 export const estimateWinnerRequest = () => {
   return async (dispatch) => {
+    dispatch(startRequest({ name: 'OFFERS_REQUEST' }));
     await fetch(`${API_URL}/contracts/estimate`, { method: 'GET' })
       .then((res) => {
         if (res.status === 200) {
@@ -107,12 +121,14 @@ export const estimateWinnerRequest = () => {
       .then((res) => {
         dispatch(estimateWinner(res?.message));
         dispatch(importStatusRequest());
+        dispatch(endRequest({ name: 'OFFERS_REQUEST' }));
       });
   };
 };
 
 export const addContracts = () => {
   return async (dispatch) => {
+    dispatch(startRequest({ name: 'CONTRACTS_REQUEST' }));
     await fetch(`${API_URL}/contracts/add`, { method: 'POST' })
       .then((res) => {
         if (res.status === 200) {
@@ -121,26 +137,33 @@ export const addContracts = () => {
       })
       .then((res) => {
         dispatch(loadContracts(res));
+        dispatch(endRequest({ name: 'CONTRACTS_REQUEST' }));
       });
   };
 };
 
 export const loadContractsRequest = () => {
   return async (dispatch) => {
+    dispatch(startRequest({ name: 'CONTRACTS_REQUEST' }));
     await fetch(`${API_URL}/contracts`, { method: 'GET' })
       .then((res) => res.json())
-      .then((res) => dispatch(loadContracts(res)));
+      .then((res) => {
+        dispatch(loadContracts(res));
+        dispatch(endRequest({ name: 'CONTRACTS_REQUEST' }));
+      });
   };
 };
 
 export const deleteAllContractsDataRequest = () => {
   return async (dispatch) => {
+    dispatch(startRequest({ name: 'REMOVE_REQUEST' }));
     await fetch(`${API_URL}/contracts`, { method: 'DELETE' })
       .then((res) => {
         return res.json();
       })
       .then((res) => {
         dispatch(deleteAllContractsData(res));
+        dispatch(endRequest({ name: 'REMOVE_REQUEST' }));
       });
   };
 };

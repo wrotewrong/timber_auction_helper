@@ -5,12 +5,14 @@ import { thunk } from 'redux-thunk';
 import catalogRedux from './catalogRedux';
 import contractsRedux from './contractsRedux';
 import statusRedux from './statusRedux';
+import requests from './requestRedux';
 
 // combine reducers
 const rootReducer = combineReducers({
   catalogRedux,
   contractsRedux,
   statusRedux,
+  requests,
 });
 
 const composeEnhancers =

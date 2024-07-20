@@ -1,4 +1,5 @@
 import { API_URL } from '../config';
+import { startRequest, endRequest } from './requestRedux';
 
 /* SELECTORS */
 export const getCatalog = ({ catalogRedux }) => catalogRedux.data;
@@ -18,10 +19,12 @@ export const deleteAllCatalogData = (payload) => ({
 /* THUNKS */
 export const loadCatalogRequest = () => {
   return async (dispatch) => {
+    dispatch(startRequest({ name: 'CATALOG_REQUEST' }));
     await fetch(`${API_URL}/catalog`, { method: 'GET' })
       .then((res) => res.json())
       .then((res) => {
         dispatch(loadCatalog(res));
+        dispatch(endRequest({ name: 'CATALOG_REQUEST' }));
       });
   };
 };
@@ -31,6 +34,7 @@ export const importCatalogRequest = (catalog) => {
   fd.append('uploadedFile', catalog);
 
   return async (dispatch) => {
+    dispatch(startRequest({ name: 'CATALOG_REQUEST' }));
     const options = {
       method: 'POST',
       body: fd,
@@ -44,6 +48,7 @@ export const importCatalogRequest = (catalog) => {
       })
       .then((res) => {
         dispatch(loadCatalog(res));
+        dispatch(endRequest({ name: 'CATALOG_REQUEST' }));
       });
   };
 };
