@@ -13,8 +13,10 @@ export const IMPORT_OFFERS = createActionName('IMPORT_OFFERS');
 export const LOAD_OFFERS = createActionName('LOAD_OFFERS');
 export const IMPORT_COMPANIES = createActionName('IMPORT_COMPANIES');
 export const LOAD_COMPANIES = createActionName('LOAD_COMPANIES');
-export const ESTIMATE_WINNER = createActionName('ESTIMATE_WINNER');
 export const LOAD_CONTRACTS = createActionName('LOAD_CONTRACTS');
+export const LOAD_CONTRACTS_MESSAGE = createActionName(
+  'LOAD_CONTRACTS_MESSAGE'
+);
 export const DELETE_DATA = createActionName('DELETE_DATA');
 
 /* ACTION CREATORS */
@@ -23,13 +25,13 @@ export const loadCompanies = (payload) => ({
   payload,
   type: LOAD_COMPANIES,
 });
-export const estimateWinner = (payload) => ({
-  payload,
-  type: ESTIMATE_WINNER,
-});
 export const loadContracts = (payload) => ({
   payload,
   type: LOAD_CONTRACTS,
+});
+export const loadContractsMessage = (payload) => ({
+  payload,
+  type: LOAD_CONTRACTS_MESSAGE,
 });
 export const deleteAllContractsData = (payload) => ({
   payload,
@@ -119,7 +121,6 @@ export const estimateWinnerRequest = () => {
         }
       })
       .then((res) => {
-        dispatch(estimateWinner(res?.message));
         dispatch(importStatusRequest());
         dispatch(endRequest({ name: 'OFFERS_REQUEST' }));
       });
@@ -131,9 +132,7 @@ export const addContracts = () => {
     dispatch(startRequest({ name: 'CONTRACTS_REQUEST' }));
     await fetch(`${API_URL}/contracts/add`, { method: 'POST' })
       .then((res) => {
-        if (res.status === 200) {
-          return res.json();
-        }
+        return res.json();
       })
       .then((res) => {
         dispatch(loadContracts(res));
@@ -186,8 +185,8 @@ export default function reducer(statePart = initialState, action = {}) {
       return { ...statePart, companies: action.payload };
     case LOAD_CONTRACTS:
       return { ...statePart, contracts: action.payload };
-    case ESTIMATE_WINNER:
-      return { ...statePart, contractStatus: action.payload };
+    case LOAD_CONTRACTS_MESSAGE:
+      return { ...statePart, contracts: action.payload };
     case DELETE_DATA:
       return {
         ...statePart,

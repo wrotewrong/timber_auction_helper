@@ -113,8 +113,6 @@ export const getOffers = async (req, res) => {
 //estimateWinner method - eliminate companies offers based on the value: minVolume-volumeWon
 export const estimateWinner = async (req, res) => {
   try {
-    console.log('estimating started');
-
     const databaseProducts = await Products.find();
     const databaseOffers = await Offers.find();
     const databaseCompanies = await Companies.find();
@@ -126,6 +124,8 @@ export const estimateWinner = async (req, res) => {
       databaseCompanies.length > 0 &&
       !status.winners
     ) {
+      console.log('estimating started');
+
       let belowCompanies = [];
       let stepsCounter = 0;
 
@@ -284,8 +284,18 @@ export const estimateWinner = async (req, res) => {
 export const addContracts = async (req, res) => {
   try {
     let contracts = await Contracts.find();
+    let companies = await Companies.find();
+    let products = await Products.find();
+    let offers = await Offers.find();
+    let status = await Status.findOne();
 
-    if (contracts.length === 0) {
+    if (
+      companies.length > 0 &&
+      products.length > 0 &&
+      offers.length > 0 &&
+      status.winners &&
+      contracts.length === 0
+    ) {
       const databaseCompanies = await Companies.find().populate({
         path: 'productsWon',
         model: 'Products',
@@ -310,7 +320,7 @@ export const addContracts = async (req, res) => {
               courtDepartment: company.courtDepartment,
               krsNumber: company.krsNumber,
               regonNumber: company.regonNumber,
-              bdoNumber: company.bdoNumber || 'nie dotyczy',
+              bdoNumber: company.bdoNumber,
               firstRepresentative: company.firstRepresentative,
               secondRepresentative: company.secondRepresentative,
               thirdRepresentative: company.thirdRepresentative,
@@ -354,11 +364,14 @@ export const addContracts = async (req, res) => {
         createDoc('annex', 'inputAnnex', contract);
       }
       zipFiles();
+      res.status(200).json({ message: 'OK', contracts });
+    } else {
+      res.status(400).json({ message: 'Bad request', contracts });
+      console.log('Contracts already exist or insufficient data provided');
     }
-    res.status(200).json({ message: 'OK', contracts });
   } catch (err) {
-    res.status(500).json({ message: err });
-    console.log(err);
+    res.status(500).json({ message: err.message });
+    console.log(err.message);
   }
 };
 
