@@ -4,9 +4,9 @@ export const Home = () => {
       className='container text-center fw-bold mb-0'
       style={{ fontSize: '50px', lineHeight: '1.2' }}
     >
-      <p>ŁÓDZKA SUBMISJA</p>
-      <p>DREWNA CENNEGO</p>
-      <p>W NADLEŚNICTWIE BRZEZINY</p>
+      <p>Łódzka Submisja</p>
+      <p>Drewna Cennego</p>
+      <p>w Nadleśnictwie Brzeziny</p>
     </div>
   );
 };

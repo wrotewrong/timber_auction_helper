@@ -1,5 +1,10 @@
 export const Footer = () => {
   return (
-    <div className='py-3 text-muted text-center'>&copy; wrotewrong 2024</div>
+    <div
+      className='d-flex justify-content-center rounded align-items-center text-white bg-success'
+      style={{ height: '7vh' }}
+    >
+      &copy; wrotewrong 2024
+    </div>
   );
 };

@@ -2,7 +2,7 @@ import { NavBar } from '../NavBar/navBar';
 
 export const Header = () => {
   return (
-    <div>
+    <div style={{ height: '8vh' }}>
       <NavBar></NavBar>
     </div>
   );

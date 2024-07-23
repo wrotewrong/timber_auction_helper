@@ -30,7 +30,7 @@ export const FileDownloadButton = (props) => {
     <div>
       <Button
         onClick={handleDownload}
-        className='mt-3'
+        className='my-3'
         variant='outline-success'
       >
         {`Pobierz ` + props.buttonName}
