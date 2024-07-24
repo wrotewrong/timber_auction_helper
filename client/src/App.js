@@ -18,6 +18,10 @@ import { importStatusRequest } from './redux/statusRedux';
 import Container from 'react-bootstrap/Container';
 
 const App = () => {
+  useEffect(() => {
+    document.title = 'Submisja';
+  }, []);
+
   const dispatch = useDispatch();
 
   useEffect(() => {

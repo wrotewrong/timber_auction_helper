@@ -1,5 +1,4 @@
 import express from 'express';
-import auctionRoutes from './routes/auctions.route.mjs';
 import catalogRoutes from './routes/catalog.route.mjs';
 import contractsRoutes from './routes/contracts.routes.mjs';
 import statusRoutes from './routes/status.route.mjs';
@@ -7,28 +6,29 @@ import mongoose from 'mongoose';
 import cors from 'cors';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import 'dotenv/config';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const app = express();
 
+app.use(express.static(path.join(__dirname, '/client/build')));
 app.use(express.static(path.join(__dirname, '/files/output')));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(cors());
+app.use(
+  cors({
+    origin: process.env.ALLOWED_ORIGIN || 'http://localhost:8001',
+  })
+);
 
-app.use(auctionRoutes.getAll);
-app.use(auctionRoutes.getById);
-app.use(auctionRoutes.addAuctions);
-app.use(auctionRoutes.deleteAuctions);
+app.use('/api/', catalogRoutes);
+app.use('/api/', contractsRoutes);
+app.use('/api/', statusRoutes);
 
-app.use(catalogRoutes);
-app.use(contractsRoutes);
-app.use(statusRoutes);
-
-// mongoose.connect('mongodb://localhost:27017/auctionHelper');
-mongoose.connect('mongodb://127.0.0.1:27017/auctionHelper');
+// mongoose.connect('mongodb://127.0.0.1:27017/auctionHelper');
+mongoose.connect(process.env.DBURI);
 
 const db = mongoose.connection;
 
@@ -40,10 +40,10 @@ db.on('error', (err) => {
   console.log('Error:' + err);
 });
 
-app.get('/', (req, res) => {
-  res.send('welcome');
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, '/client/build/index.html'));
 });
 
-app.listen(8001, () => {
+app.listen(process.env.PORT || 8001, () => {
   console.log('server is running...');
 });
