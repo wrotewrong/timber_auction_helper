@@ -47,17 +47,13 @@ const importExcelDataMDB = (dataType, inputFileName) => {
           i++;
         }
         if (dataType === 'products') {
-          // filledData.maxBid = { company: undefined, offer: 0 };
           data.allProducts.push(filledData);
         } else if (dataType === 'companies') {
-          // filledData.volumeWon = 0;
-          // filledData.productsWon = [];
           data.allCompanies.push(filledData);
         } else if (dataType === 'offers') {
           data.allOffers.push(filledData);
         }
       }
-      // console.log(allProducts);
 
       if (dataType === 'products') {
         return data.allProducts;

@@ -8,6 +8,16 @@ const speciesToGerman = (name) => {
     return `${name} - Lärche`;
   } else if (nameUpperCase === 'OL') {
     return `${name} - Erle`;
+  } else if (nameUpperCase === 'SO') {
+    return `${name} - Kiefern`;
+  } else if (nameUpperCase === 'SW') {
+    return `${name} - Fichten`;
+  } else if (nameUpperCase === 'JS') {
+    return `${name} - Eschen`;
+  } else if (nameUpperCase === 'JW') {
+    return `${name} - Berg-Ahorn`;
+  } else if (nameUpperCase === 'DBCZ') {
+    return `${name} - Roteiche`;
   }
 };
 

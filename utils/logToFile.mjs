@@ -8,13 +8,20 @@ const __dirname = path.dirname(__filename);
 const logToFile = (file, text) => {
   const filePath = path.join(__dirname, `../files/output/${file}.txt`);
   const date = new Date(Date.now());
-  const content = `\n${date.getDate()}.${
+  const content = `\n${date.getDate().toString().padStart(2, '0')}.${(
     date.getMonth() + 1
-  }.${date.getFullYear()} ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()} - ${text}`;
+  )
+    .toString()
+    .padStart(2, '0')}.${date.getFullYear()} ${date
+    .getHours()
+    .toString()
+    .padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}:${date
+    .getSeconds()
+    .toString()
+    .padStart(2, '0')} - ${text}`;
 
   try {
     fs.appendFileSync(filePath, content);
-    // console.log(`added text to ${file}`);
   } catch (err) {
     console.error(err);
   }

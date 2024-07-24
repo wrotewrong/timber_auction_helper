@@ -3,7 +3,6 @@ import Companies from '../models/companiesModel.mjs';
 import Products from '../models/productsModel.mjs';
 import importExcelDataMDB from '../utils/importExcelDataMDB.mjs';
 import BigNumber from 'bignumber.js';
-import prepareContractsMDB from '../utils/prepareContractsMDB.mjs';
 import Contracts from '../models/contractsModel.mjs';
 import {
   contractDate,
@@ -125,7 +124,6 @@ export const estimateWinner = async (req, res) => {
       !status.winners
     ) {
       console.log('estimating started');
-
       let belowCompanies = [];
       let stepsCounter = 0;
 
@@ -142,19 +140,15 @@ export const estimateWinner = async (req, res) => {
             (offer) =>
               product.productNumber === offer.productNumber && offer.bid > 0
           );
-          // console.log('productOffers', productOffers);
 
           if (productOffers.length) {
             const bids = productOffers.map((offer) => offer.bid);
-            // console.log('bids', bids);
 
             const maxBid = Math.max(...bids);
-            // console.log('maxBid', maxBid);
 
             const maxOffers = productOffers.filter(
               (offer) => offer.bid === maxBid
             );
-            // console.log('maxOffers', maxOffers);
 
             const winningOffer = pickRandomOffer(product, maxOffers);
 
@@ -205,12 +199,10 @@ export const estimateWinner = async (req, res) => {
             new BigNumber(company.volumeWon)
           )
         );
-        // console.log('belowCompaniesAllDiffrences', belowCompaniesAllDiffrences);
 
         let belowCompaniesMaxDiffrence = Math.max(
           ...belowCompaniesAllDiffrences
         );
-        // console.log('belowCompaniesMaxDiffrence', belowCompaniesMaxDiffrence);
 
         let maxBelowCompanies = belowCompanies.filter(
           (company) =>
@@ -218,11 +210,8 @@ export const estimateWinner = async (req, res) => {
               new BigNumber(company.volumeWon)
             ) == belowCompaniesMaxDiffrence
         );
-        // console.log('maxBelowCompanies', maxBelowCompanies);
 
         const excludedOffer = excludeRandomOffer(maxBelowCompanies);
-
-        // console.log('excludedOffer', excludedOffer);
 
         for (let company of databaseCompanies) {
           if (excludedOffer && company.nip === excludedOffer.nip) {
