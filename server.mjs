@@ -19,7 +19,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(
   cors({
-    origin: process.env.ALLOWED_ORIGIN || 'http://localhost:8001',
+    origin: process.env.ALLOWED_ORIGIN,
   })
 );
 
@@ -27,7 +27,6 @@ app.use('/api/', catalogRoutes);
 app.use('/api/', contractsRoutes);
 app.use('/api/', statusRoutes);
 
-// mongoose.connect('mongodb://127.0.0.1:27017/auctionHelper');
 mongoose.connect(process.env.DBURI);
 
 const db = mongoose.connection;

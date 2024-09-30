@@ -81,21 +81,66 @@ export const importOffers = async (req, res) => {
           console.error('Error importing offers:', error);
         });
 
-      for (let offer of importedOffers) {
-        const newOffer = new Offers(offer);
-        await newOffer.save();
-        console.log(
-          `Offer by company nip: ${newOffer.nip} for product ${newOffer.productNumber} has been added`
-        );
+      if (!importedOffers || importedOffers.length === 0) {
+        return res.status(400).json({ message: 'No offers to import' });
       }
+
+      const bulkOffers = importedOffers.map((offer) => {
+        return {
+          insertOne: {
+            document: {
+              productNumber: offer.productNumber,
+              nip: offer.nip,
+              bid: offer.bid,
+            },
+          },
+        };
+      });
+
+      await Offers.bulkWrite(bulkOffers);
+
       offers = await Offers.find();
+      res.status(200).json({ message: 'OK', offers });
+      console.log(`${offers.length} offers has been added`);
+    } else {
+      res.status(200).json({ message: 'OK', offers });
+      console.log(`Offers has already been uploaded`);
     }
-    res.status(200).json({ message: 'OK', offers });
   } catch (err) {
     res.status(500).json({ message: err });
     console.log(err);
   }
 };
+
+// //non-bulk version
+// export const importOffers = async (req, res) => {
+//   try {
+//     let offers = await Offers.find();
+//     if (offers.length === 0) {
+//       const importedOffers = await importExcelDataMDB('offers', 'offersDataMDB')
+//         .then((offers) => {
+//           return offers;
+//         })
+//         .catch((error) => {
+//           console.error('Error importing offers:', error);
+//         });
+
+//       for (let offer of importedOffers) {
+//         const newOffer = new Offers(offer);
+//         await newOffer.save();
+//         console.log(
+//           `Offer by company nip: ${newOffer.nip} for product ${newOffer.productNumber} has been added`
+//         );
+//       }
+//       offers = await Offers.find();
+//     }
+//     res.status(200).json({ message: 'OK', offers });
+//   } catch (err) {
+//     res.status(500).json({ message: err });
+//     console.log(err);
+//     await Offers.deleteMany();
+//   }
+// };
 
 export const getOffers = async (req, res) => {
   try {
