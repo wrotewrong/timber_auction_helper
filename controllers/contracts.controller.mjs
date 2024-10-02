@@ -21,6 +21,7 @@ import logToFile from '../utils/logToFile.mjs';
 import Status from '../models/statusModel.mjs';
 import zipFiles from '../utils/zipFiles.mjs';
 import fs from 'fs';
+import mongoose from 'mongoose';
 
 import path from 'path';
 import { fileURLToPath } from 'url';
@@ -70,16 +71,16 @@ export const getCompanies = async (req, res) => {
 };
 
 export const importOffers = async (req, res) => {
+  const session = await mongoose.startSession();
+  let transactionFinished = false;
   try {
-    let offers = await Offers.find();
+    session.startTransaction();
+    let offers = await Offers.find().session(session);
     if (offers.length === 0) {
-      const importedOffers = await importExcelDataMDB('offers', 'offersDataMDB')
-        .then((offers) => {
-          return offers;
-        })
-        .catch((error) => {
-          console.error('Error importing offers:', error);
-        });
+      const importedOffers = await importExcelDataMDB(
+        'offers',
+        'offersDataMDB'
+      );
 
       if (!importedOffers || importedOffers.length === 0) {
         return res.status(400).json({ message: 'No offers to import' });
@@ -97,22 +98,31 @@ export const importOffers = async (req, res) => {
         };
       });
 
-      await Offers.bulkWrite(bulkOffers);
+      await Offers.bulkWrite(bulkOffers, { session });
+      await session.commitTransaction();
+      session.endSession();
+      transactionFinished = true;
 
       offers = await Offers.find();
       res.status(200).json({ message: 'OK', offers });
-      console.log(`${offers.length} offers has been added`);
+      console.log(`Added ${offers.length} offers`);
     } else {
       res.status(200).json({ message: 'OK', offers });
-      console.log(`Offers has already been uploaded`);
+      console.log(`Offers has already been added`);
     }
   } catch (err) {
-    res.status(500).json({ message: err });
+    if (!transactionFinished) {
+      await session.abortTransaction();
+      session.endSession();
+      console.log('Transaction failed');
+    }
+
+    res.status(500).json({ message: err.message });
     console.log(err);
   }
 };
 
-// //non-bulk version
+// //non-bulk non-transaction version
 // export const importOffers = async (req, res) => {
 //   try {
 //     let offers = await Offers.find();
