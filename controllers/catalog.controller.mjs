@@ -4,6 +4,7 @@ import createDoc from '../utils/createDocMDB.mjs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import fs from 'fs';
+import mongoose from 'mongoose';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -23,36 +24,100 @@ export const getCatalog = async (req, res) => {
 };
 
 export const importData = async (req, res) => {
+  const session = await mongoose.startSession();
+  let transactionFinished = false;
   try {
-    let products = await Products.find();
+    session.startTransaction();
+    let products = await Products.find().session(session);
     if (products.length === 0) {
       const importedProducts = await importExcelDataMDB(
         'products',
         'productsDataMDB'
-      )
-        .then((products) => {
-          return products;
-        })
-        .catch((error) => {
-          console.error('Error importing products:', error);
-        });
+      );
 
-      for (let importedProduct of importedProducts) {
-        const newProduct = new Products(importedProduct);
-        await newProduct.save();
-        console.log(
-          `Product number ${newProduct.productNumber} has been added`
-        );
+      if (!importedProducts || importedProducts.length === 0) {
+        res.status(400).json({ message: 'No products to import' });
+        console.log('No products to import');
+        return;
       }
+
+      const bulkProducts = importedProducts.map((product) => {
+        return {
+          insertOne: {
+            document: {
+              productNumber: product.productNumber,
+              forestDistrict: product.forestDistrict,
+              woodNumber: product.woodNumber,
+              species: product.species,
+              length: product.length,
+              diameter: product.diameter,
+              volume: product.volume,
+              class: product.class,
+              startingPriceSingle: product.startingPriceSingle,
+              maxOfferCompany: product.maxOfferCompany,
+              maxOfferBid: product.maxOfferBid,
+              finalPriceTotal: product.finalPriceTotal,
+            },
+          },
+        };
+      });
+
+      await Products.bulkWrite(bulkProducts, { session });
+      await session.commitTransaction();
+      session.endSession();
+      transactionFinished = true;
+
       products = await Products.find();
+      res.status(200).json({ message: 'OK', products });
+      console.log(`Added ${products.length} products`);
+    } else {
+      res.status(200).json({ message: 'OK', products });
+      console.log(`Products has already been added`);
+    }
+  } catch (err) {
+    if (!transactionFinished) {
+      await session.abortTransaction();
+      session.endSession();
+      console.log(`Transaction failed`);
     }
 
-    res.status(200).json({ message: 'OK', products });
-  } catch (err) {
     res.status(500).json({ message: err.message });
     console.log(err.message);
   }
 };
+
+// // non-bulk non-transaction
+// export const importData = async (req, res) => {
+//   try {
+//     let products = await Products.find();
+//     if (products.length === 0) {
+//       const importedProducts = await importExcelDataMDB(
+//         'products',
+//         'productsDataMDB'
+//       )
+//         .then((products) => {
+//           return products;
+//         })
+//         .catch((error) => {
+//           console.error('Error importing products:', error);
+//         });
+
+//       for (let importedProduct of importedProducts) {
+//         const newProduct = new Products(importedProduct);
+//         await newProduct.save();
+//         console.log(
+//           `Product number ${newProduct.productNumber} has been added`
+//         );
+//       }
+//       products = await Products.find();
+//     }
+
+//     res.status(200).json({ message: 'OK', products });
+//   } catch (err) {
+//     res.status(500).json({ message: err.message });
+//     console.log(err.message);
+//   }
+// };
 
 export const downloadCatalog = async (req, res) => {
   try {

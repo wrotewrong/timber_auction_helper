@@ -30,33 +30,107 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 export const importCompanies = async (req, res) => {
+  const session = await mongoose.startSession();
+  let transactionFinished = false;
   try {
-    let companies = await Companies.find();
+    session.startTransaction();
+    let companies = await Companies.find().session(session);
     if (companies.length === 0) {
       const importedCompanies = await importExcelDataMDB(
         'companies',
         'companiesDataMDB'
-      )
-        .then((companies) => {
-          return companies;
-        })
-        .catch((error) => {
-          console.error('Error importing companies:', error);
-        });
+      );
 
-      for (let company of importedCompanies) {
-        const newCompany = new Companies(company);
-        await newCompany.save();
-        console.log(`Company nip: ${newCompany.nip} has been added`);
+      if (!importedCompanies || importedCompanies.length === 0) {
+        res.status(400).json({ message: 'No comapnies to import' });
+        console.log('No comapnies to import');
+        return;
       }
+
+      const bulkCompanies = importedCompanies.map((company) => {
+        return {
+          insertOne: {
+            document: {
+              nip: company.nip,
+              name: company.name,
+              zipCode: company.zipCode,
+              homeZipCode: company.homeZipCode,
+              homeZipCodeSecond: company.homeZipCodeSecond,
+              homeZipCodeThird: company.homeZipCodeThird,
+              courtZipCode: company.courtZipCode,
+              courtDepartment: company.courtDepartment,
+              krsNumber: company.krsNumber,
+              regonNumber: company.regonNumber,
+              bdoNumber: company.bdoNumber,
+              firstRepresentative: company.firstRepresentative,
+              secondRepresentative: company.secondRepresentative,
+              thirdRepresentative: company.thirdRepresentative,
+              isLegalPerson: company.isLegalPerson,
+              isNaturalPerson: company.isNaturalPerson,
+              isPartnership: company.isPartnership,
+              minVolume: company.minVolume,
+              volumeWon: company.volumeWon,
+              productsWon: company.productsWon,
+              status: company.status,
+              vat: company.vat,
+            },
+          },
+        };
+      });
+
+      await Companies.bulkWrite(bulkCompanies, { session });
+      await session.commitTransaction();
+      session.endSession();
+      transactionFinished = true;
+
       companies = await Companies.find();
+      res.status(200).json({ message: 'OK', companies });
+      console.log(`Added ${companies.length} companies`);
+    } else {
+      res.status(200).json({ message: 'OK', companies });
+      console.log(`Companies has already been added`);
     }
-    res.status(200).json({ message: 'OK', companies });
   } catch (err) {
+    if (!transactionFinished) {
+      await session.abortTransaction();
+      session.endSession();
+      console.log(`Transaction failed`);
+    }
+
     res.status(500).json({ message: err });
     console.log(err);
   }
 };
+
+// // non-bulk non-transaction:
+// export const importCompanies = async (req, res) => {
+//   try {
+//     let companies = await Companies.find();
+//     if (companies.length === 0) {
+//       const importedCompanies = await importExcelDataMDB(
+//         'companies',
+//         'companiesDataMDB'
+//       )
+//         .then((companies) => {
+//           return companies;
+//         })
+//         .catch((error) => {
+//           console.error('Error importing companies:', error);
+//         });
+
+//       for (let company of importedCompanies) {
+//         const newCompany = new Companies(company);
+//         await newCompany.save();
+//         console.log(`Company nip: ${newCompany.nip} has been added`);
+//       }
+//       companies = await Companies.find();
+//     }
+//     res.status(200).json({ message: 'OK', companies });
+//   } catch (err) {
+//     res.status(500).json({ message: err });
+//     console.log(err);
+//   }
+// };
 
 export const getCompanies = async (req, res) => {
   try {
@@ -83,7 +157,9 @@ export const importOffers = async (req, res) => {
       );
 
       if (!importedOffers || importedOffers.length === 0) {
-        return res.status(400).json({ message: 'No offers to import' });
+        res.status(400).json({ message: 'No offers to import' });
+        console.log('No offers to import');
+        return;
       }
 
       const bulkOffers = importedOffers.map((offer) => {
