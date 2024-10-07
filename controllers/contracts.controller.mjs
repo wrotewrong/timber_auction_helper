@@ -22,6 +22,7 @@ import Status from '../models/statusModel.mjs';
 import zipFiles from '../utils/zipFiles.mjs';
 import fs from 'fs';
 import mongoose from 'mongoose';
+import verifyData from '../utils/verifyData.mjs';
 
 import path from 'path';
 import { fileURLToPath } from 'url';
@@ -46,6 +47,8 @@ export const importCompanies = async (req, res) => {
         console.log('No comapnies to import');
         return;
       }
+
+      verifyData('companies', importedCompanies);
 
       const bulkCompanies = importedCompanies.map((company) => {
         return {
@@ -161,6 +164,8 @@ export const importOffers = async (req, res) => {
         console.log('No offers to import');
         return;
       }
+
+      verifyData('offers', importedOffers);
 
       const bulkOffers = importedOffers.map((offer) => {
         return {

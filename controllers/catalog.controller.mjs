@@ -5,6 +5,7 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import fs from 'fs';
 import mongoose from 'mongoose';
+import verifyData from '../utils/verifyData.mjs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -34,6 +35,8 @@ export const importData = async (req, res) => {
         'products',
         'productsDataMDB'
       );
+
+      verifyData('products', importedProducts);
 
       if (!importedProducts || importedProducts.length === 0) {
         res.status(400).json({ message: 'No products to import' });
