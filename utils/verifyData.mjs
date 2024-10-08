@@ -6,6 +6,14 @@ export const verifyData = (dataType, data) => {
         throw new Error('Product number must not be a number');
       }
 
+      if (!product.length.includes('.')) {
+        throw new Error('Length must be a number');
+      }
+
+      if (!product.diameter.includes('.')) {
+        throw new Error('Diameter must be a number');
+      }
+
       if (productNumber.includes(product.productNumber)) {
         throw new Error('Product number must be unique');
       }
@@ -67,19 +75,12 @@ export const verifyData = (dataType, data) => {
       }
 
       if (
-        (company.isLegalperson === 'tak' &&
-          company.isNaturalPerson === 'tak' &&
+        (company.isNaturalPerson === 'tak' &&
           company.isPartnership === 'tak') ||
-        (company.isLegalperson === '' &&
-          company.isNaturalPerson === 'tak' &&
-          company.isPartnership === 'tak') ||
-        (company.isLegalperson === 'tak' &&
-          company.isNaturalPerson === '' &&
-          company.isPartnership === 'tak') ||
-        (company.isLegalperson === 'tak' &&
-          company.isNaturalPerson === 'tak' &&
-          company.isPartnership === '') ||
-        (company.isLegalperson === null &&
+        (company.isLegalPerson === 'tak' && company.isPartnership === 'tak') ||
+        (company.isLegalPerson === 'tak' &&
+          company.isNaturalPerson === 'tak') ||
+        (company.isLegalPerson === null &&
           company.isNaturalPerson === null &&
           company.isPartnership === null)
       ) {
