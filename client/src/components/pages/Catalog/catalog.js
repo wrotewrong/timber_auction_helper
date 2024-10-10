@@ -35,6 +35,15 @@ export const Catalog = () => {
                   ></FileDownloadButton>
                 </div>
               ) : null}
+              {catalog?.message !== 'OK' &&
+              catalog?.message !== 'Not found...' &&
+              catalog?.message !== undefined ? (
+                <div>
+                  <p className='mt-0 fw-bold text-danger'>
+                    wystąpił błąd: zweryfikuj dane i spróbuj ponownie
+                  </p>
+                </div>
+              ) : null}
             </div>
           </div>
         </div>

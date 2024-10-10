@@ -42,9 +42,7 @@ export const importCatalogRequest = (catalog) => {
 
     await fetch(`${API_URL}/catalog/import`, options)
       .then((res) => {
-        if (res.status === 200) {
-          return res.json();
-        }
+        return res.json();
       })
       .then((res) => {
         dispatch(loadCatalog(res));

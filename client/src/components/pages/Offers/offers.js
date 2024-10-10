@@ -45,12 +45,30 @@ export const Offers = () => {
               {offers?.offers?.length > 0 ? (
                 <p className='fw-bold text-success'>{`oferty dodane: ${offers?.offers?.length}`}</p>
               ) : null}
+              {offers?.message !== 'OK' &&
+              offers?.message !== 'Not found...' &&
+              offers?.message !== undefined ? (
+                <div>
+                  <p className='mt-0 fw-bold text-danger'>
+                    wystąpił błąd: zweryfikuj dane i spróbuj ponownie
+                  </p>
+                </div>
+              ) : null}
             </div>
             <div className='col-4 ms-4'>
               <p className='fw-bold fs-4 mb-0'>Załącz plik z kontrahentami:</p>
               <FileForm fileType={'companies'}></FileForm>
               {companies?.companies?.length > 0 ? (
                 <p className='fw-bold text-success'>{`kontrahenci dodani: ${companies?.companies?.length}`}</p>
+              ) : null}
+              {companies?.message !== 'OK' &&
+              companies?.message !== 'Not found...' &&
+              companies?.message !== undefined ? (
+                <div>
+                  <p className='mt-0 fw-bold text-danger'>
+                    wystąpił błąd: zweryfikuj dane i spróbuj ponownie
+                  </p>
+                </div>
               ) : null}
             </div>
           </div>

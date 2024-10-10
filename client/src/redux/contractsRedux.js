@@ -64,9 +64,7 @@ export const importOffersRequest = (offers) => {
 
     await fetch(`${API_URL}/contracts/importOffers`, options)
       .then((res) => {
-        if (res.status === 200) {
-          return res.json();
-        }
+        return res.json();
       })
       .then((res) => {
         dispatch(loadOffers(res));
@@ -100,9 +98,7 @@ export const importCompaniesRequest = (companies) => {
 
     await fetch(`${API_URL}/contracts/importCompanies`, options)
       .then((res) => {
-        if (res.status === 200) {
-          return res.json();
-        }
+        return res.json();
       })
       .then((res) => {
         dispatch(loadCompanies(res));
@@ -116,9 +112,9 @@ export const estimateWinnerRequest = () => {
     dispatch(startRequest({ name: 'OFFERS_REQUEST' }));
     await fetch(`${API_URL}/contracts/estimate`, { method: 'GET' })
       .then((res) => {
-        if (res.status === 200) {
-          return res.json();
-        }
+        // if (res.status === 200) {
+        return res.json();
+        // }
       })
       .then((res) => {
         dispatch(importStatusRequest());

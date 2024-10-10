@@ -140,7 +140,7 @@ export const getCompanies = async (req, res) => {
     const companies = await Companies.find();
     if (companies.length > 0) {
       res.status(200).json({ message: 'OK', companies });
-    } else res.status(400).json({ message: 'Companies not found' });
+    } else res.status(400).json({ message: 'Not found...' });
   } catch (err) {
     res.status(500).json({ message: err.message });
     console.log(err.message);
@@ -238,7 +238,7 @@ export const getOffers = async (req, res) => {
     const offers = await Offers.find();
     if (offers.length > 0) {
       res.status(200).json({ message: 'OK', offers });
-    } else res.status(400).json({ message: 'Offers not found' });
+    } else res.status(400).json({ message: 'Not found...' });
   } catch (err) {
     res.status(500).json({ message: err.message });
     console.log(err.message);
@@ -505,7 +505,7 @@ export const getContracts = async (req, res) => {
     const contracts = await Contracts.find();
     if (contracts.length > 0) {
       res.status(200).json({ message: 'OK', contracts });
-    } else res.status(400).json({ message: 'Contracts not found' });
+    } else res.status(400).json({ message: 'Not found...' });
   } catch (err) {
     res.status(500).json({ message: err.message });
     console.log(err.message);

@@ -16,7 +16,7 @@ export const getCatalog = async (req, res) => {
     if (products.length > 0) {
       res.status(200).json({ message: 'OK', products });
     } else {
-      res.status(400).json({ message: 'Catalog not found' });
+      res.status(400).json({ message: 'Not found...' });
     }
   } catch (err) {
     res.status(500).json({ message: err.message });
