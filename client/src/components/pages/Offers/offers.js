@@ -79,11 +79,8 @@ export const Offers = () => {
               companies?.companies?.length > 0 &&
               catalog?.products?.length > 0 ? (
                 <>
-                  <p className='fw-bold fs-4'>
-                    Przypisz kontrahentów do losów:
-                  </p>
                   <Button variant='outline-success' onClick={estimateWinner}>
-                    Przypisz kontrahentów
+                    Rozstrzygnij submisję
                   </Button>
                 </>
               ) : null}
@@ -91,7 +88,7 @@ export const Offers = () => {
               {status?.winners ? (
                 <>
                   <p className='fw-bold text-success'>
-                    przypisano kontrahentów
+                    Submisja rozstrzygnięta
                   </p>
                   <FileDownloadButton
                     fileEndpointPath={'/contracts/logger'}
