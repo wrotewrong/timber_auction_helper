@@ -248,9 +248,9 @@ export const getOffers = async (req, res) => {
 //estimateWinner method - eliminate companies offers based on the value: minVolume-volumeWon
 export const estimateWinner = async (req, res) => {
   try {
-    const databaseProducts = await Products.find();
-    const databaseOffers = await Offers.find();
-    const databaseCompanies = await Companies.find();
+    let databaseProducts = await Products.find();
+    let databaseOffers = await Offers.find();
+    let databaseCompanies = await Companies.find();
     const status = await Status.findOne();
 
     if (
@@ -269,8 +269,12 @@ export const estimateWinner = async (req, res) => {
           'logger',
           `PRZYPISYWANIE OFERT - ROZPOCZĘCIE - ETAP ${stepsCounter}...`
         );
+        databaseProducts = await Products.find();
+        databaseOffers = await Offers.find();
+        databaseCompanies = await Companies.find();
 
         //assigns highest bid to product
+        const bulkProductsUpdate = [];
         for (let product of databaseProducts) {
           const productOffers = databaseOffers.filter(
             (offer) =>
@@ -288,35 +292,64 @@ export const estimateWinner = async (req, res) => {
 
             const winningOffer = pickRandomOffer(product, maxOffers);
 
-            product.maxOfferCompany = winningOffer.nip;
-            product.maxOfferBid = winningOffer.bid;
-            product.finalPriceTotal = new BigNumber(product.volume).times(
-              new BigNumber(winningOffer.bid)
-            );
-            await product.save();
+            bulkProductsUpdate.push({
+              updateOne: {
+                filter: { productNumber: product.productNumber },
+                update: {
+                  $set: {
+                    maxOfferCompany: winningOffer.nip,
+                    maxOfferBid: winningOffer.bid,
+                    finalPriceTotal: new BigNumber(product.volume).times(
+                      new BigNumber(winningOffer.bid)
+                    ),
+                  },
+                },
+              },
+            });
           } else {
             logToFile('logger', `LOS nr ${product.productNumber} - brak ofert`);
           }
         }
+        await Products.bulkWrite(bulkProductsUpdate);
 
         //accumulates volumeWon of company and creates a list of products it has won
+        databaseProducts = await Products.find();
+        databaseCompanies = await Companies.find();
+        const bulkCompaniesUpdate = [];
         for (let company of databaseCompanies) {
+          let volumeWon = company.volumeWon;
+          const productsWon = company.productsWon;
           for (let product of databaseProducts) {
             if (company.nip === product.maxOfferCompany) {
-              company.volumeWon = new BigNumber(company.volumeWon).plus(
+              volumeWon = new BigNumber(volumeWon).plus(
                 new BigNumber(product.volume)
               );
-              company.productsWon.push(product.productNumber);
+              productsWon.push(product.productNumber);
             }
           }
-          await company.save();
+          bulkCompaniesUpdate.push({
+            updateOne: {
+              filter: {
+                nip: company.nip,
+              },
+              update: {
+                $set: {
+                  volumeWon,
+                  productsWon,
+                },
+              },
+            },
+          });
         }
+        await Companies.bulkWrite(bulkCompaniesUpdate);
 
         //finds companies that didnt bought enough volume and picks one with the highest missing volume at random
+        databaseCompanies = await Companies.find();
         belowCompanies = databaseCompanies.filter(
           (company) =>
-            company.minVolume - company.volumeWon > 0 &&
-            company.status === 'active'
+            new BigNumber(company.minVolume).minus(
+              new BigNumber(company.volumeWon)
+            ) > 0 && company.status === 'active'
         );
 
         belowCompanies.map((company) => {
@@ -356,33 +389,52 @@ export const estimateWinner = async (req, res) => {
           }
         }
 
-        //removes the offers of company with the highest minVolume-volumeWon value
+        // removes the offers of company with the highest minVolume-volumeWon value
+        databaseOffers = await Offers.find();
         if (excludedOffer) {
-          for (let offer of databaseOffers) {
+          databaseOffers.forEach((offer) => {
             if (offer.nip === excludedOffer.nip && offer.bid > 0) {
               logToFile(
                 'logger',
                 `Oferta firmy nip: ${offer.nip} na LOS nr ${offer.productNumber} o wartości: ${offer.bid} PLN została wykluczona`
               );
-              offer.bid = 0;
-              await offer.save();
             }
-          }
+          });
+
+          await Offers.updateMany(
+            {
+              nip: excludedOffer.nip,
+              bid: { $gt: 0 },
+            },
+            {
+              $set: {
+                bid: 0,
+              },
+            }
+          );
 
           //clears the bid assigned to all product
-          for (let product of databaseProducts) {
-            product.maxOfferCompany = '';
-            product.maxOfferBid = 0;
-            product.finalPriceTotal = 0;
-            await product.save();
-          }
+          await Products.updateMany(
+            {},
+            {
+              $set: {
+                maxOfferCompany: '',
+                maxOfferBid: 0,
+                finalPriceTotal: 0,
+              },
+            }
+          );
 
           //clears the volume and products list assigned to all companies
-          for (let company of databaseCompanies) {
-            company.volumeWon = 0;
-            company.productsWon = [];
-            await company.save();
-          }
+          await Companies.updateMany(
+            {},
+            {
+              $set: {
+                volumeWon: 0,
+                productsWon: [],
+              },
+            }
+          );
         }
         logToFile(
           'logger',
@@ -405,6 +457,166 @@ export const estimateWinner = async (req, res) => {
     console.log(err);
   }
 };
+
+// export const estimateWinner = async (req, res) => {
+//   try {
+//     const databaseProducts = await Products.find();
+//     const databaseOffers = await Offers.find();
+//     const databaseCompanies = await Companies.find();
+//     const status = await Status.findOne();
+
+//     if (
+//       databaseProducts.length > 0 &&
+//       databaseOffers.length > 0 &&
+//       databaseCompanies.length > 0 &&
+//       !status.winners
+//     ) {
+//       console.log('estimating started');
+//       let belowCompanies = [];
+//       let stepsCounter = 0;
+
+//       do {
+//         stepsCounter++;
+//         logToFile(
+//           'logger',
+//           `PRZYPISYWANIE OFERT - ROZPOCZĘCIE - ETAP ${stepsCounter}...`
+//         );
+
+//         //assigns highest bid to product
+//         for (let product of databaseProducts) {
+//           const productOffers = databaseOffers.filter(
+//             (offer) =>
+//               product.productNumber === offer.productNumber && offer.bid > 0
+//           );
+
+//           if (productOffers.length) {
+//             const bids = productOffers.map((offer) => offer.bid);
+
+//             const maxBid = Math.max(...bids);
+
+//             const maxOffers = productOffers.filter(
+//               (offer) => offer.bid === maxBid
+//             );
+
+//             const winningOffer = pickRandomOffer(product, maxOffers);
+
+//             product.maxOfferCompany = winningOffer.nip;
+//             product.maxOfferBid = winningOffer.bid;
+//             product.finalPriceTotal = new BigNumber(product.volume).times(
+//               new BigNumber(winningOffer.bid)
+//             );
+//             await product.save();
+//           } else {
+//             logToFile('logger', `LOS nr ${product.productNumber} - brak ofert`);
+//           }
+//         }
+
+//         //accumulates volumeWon of company and creates a list of products it has won
+//         for (let company of databaseCompanies) {
+//           for (let product of databaseProducts) {
+//             if (company.nip === product.maxOfferCompany) {
+//               company.volumeWon = new BigNumber(company.volumeWon).plus(
+//                 new BigNumber(product.volume)
+//               );
+//               company.productsWon.push(product.productNumber);
+//             }
+//           }
+//           await company.save();
+//         }
+
+//         //finds companies that didnt bought enough volume and picks one with the highest missing volume at random
+//         belowCompanies = databaseCompanies.filter(
+//           (company) =>
+//             company.minVolume - company.volumeWon > 0 &&
+//             company.status === 'active'
+//         );
+
+//         belowCompanies.map((company) => {
+//           logToFile(
+//             'logger',
+//             `Firmy, którym brakuje miąższości: nip: ${
+//               company.nip
+//             } brakuje m3: ${new BigNumber(company.minVolume).minus(
+//               new BigNumber(company.volumeWon)
+//             )}`
+//           );
+//         });
+
+//         let belowCompaniesAllDiffrences = belowCompanies.map((company) =>
+//           new BigNumber(company.minVolume).minus(
+//             new BigNumber(company.volumeWon)
+//           )
+//         );
+
+//         let belowCompaniesMaxDiffrence = Math.max(
+//           ...belowCompaniesAllDiffrences
+//         );
+
+//         let maxBelowCompanies = belowCompanies.filter(
+//           (company) =>
+//             new BigNumber(company.minVolume).minus(
+//               new BigNumber(company.volumeWon)
+//             ) == belowCompaniesMaxDiffrence
+//         );
+
+//         const excludedOffer = excludeRandomOffer(maxBelowCompanies);
+
+//         for (let company of databaseCompanies) {
+//           if (excludedOffer && company.nip === excludedOffer.nip) {
+//             company.status = 'excluded';
+//             await company.save();
+//           }
+//         }
+
+//         //removes the offers of company with the highest minVolume-volumeWon value
+//         if (excludedOffer) {
+//           for (let offer of databaseOffers) {
+//             if (offer.nip === excludedOffer.nip && offer.bid > 0) {
+//               logToFile(
+//                 'logger',
+//                 `Oferta firmy nip: ${offer.nip} na LOS nr ${offer.productNumber} o wartości: ${offer.bid} PLN została wykluczona`
+//               );
+//               offer.bid = 0;
+//               await offer.save();
+//             }
+//           }
+
+//           //clears the bid assigned to all product
+//           for (let product of databaseProducts) {
+//             product.maxOfferCompany = '';
+//             product.maxOfferBid = 0;
+//             product.finalPriceTotal = 0;
+//             await product.save();
+//           }
+
+//           //clears the volume and products list assigned to all companies
+//           for (let company of databaseCompanies) {
+//             company.volumeWon = 0;
+//             company.productsWon = [];
+//             await company.save();
+//           }
+//         }
+//         logToFile(
+//           'logger',
+//           `PRZYPISYWANIE OFERT - ZAKOŃCZENIE - ETAP ${stepsCounter}`
+//         );
+//         console.log(`step ${stepsCounter} finished`);
+//       } while (belowCompanies.length > 0);
+//       logToFile('logger', `PRZYPISYWANIE SKOŃCZONE`);
+//       console.log('estimating finished');
+
+//       status.winners = true;
+//       await status.save();
+
+//       res.status(200).json({ message: 'OK' });
+//     } else {
+//       res.status(400).json({ message: 'Winners already estimated' });
+//     }
+//   } catch (err) {
+//     res.status(500).json({ message: err });
+//     console.log(err);
+//   }
+// };
 
 export const addContracts = async (req, res) => {
   try {
