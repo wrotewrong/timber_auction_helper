@@ -247,11 +247,15 @@ export const getOffers = async (req, res) => {
 
 //estimateWinner method - eliminate companies offers based on the value: minVolume-volumeWon
 export const estimateWinner = async (req, res) => {
+  const session = await mongoose.startSession();
+  let transactionFinished = false;
+  session.startTransaction();
+
   try {
-    let databaseProducts = await Products.find();
-    let databaseOffers = await Offers.find();
-    let databaseCompanies = await Companies.find();
-    const status = await Status.findOne();
+    let databaseProducts = await Products.find().session(session);
+    let databaseOffers = await Offers.find().session(session);
+    let databaseCompanies = await Companies.find().session(session);
+    const status = await Status.findOne().session(session);
 
     if (
       databaseProducts.length > 0 &&
@@ -269,9 +273,9 @@ export const estimateWinner = async (req, res) => {
           'logger',
           `PRZYPISYWANIE OFERT - ROZPOCZĘCIE - ETAP ${stepsCounter}...`
         );
-        databaseProducts = await Products.find();
-        databaseOffers = await Offers.find();
-        databaseCompanies = await Companies.find();
+        databaseProducts = await Products.find().session(session);
+        databaseOffers = await Offers.find().session(session);
+        databaseCompanies = await Companies.find().session(session);
 
         //assigns highest bid to product
         const bulkProductsUpdate = [];
@@ -310,11 +314,11 @@ export const estimateWinner = async (req, res) => {
             logToFile('logger', `LOS nr ${product.productNumber} - brak ofert`);
           }
         }
-        await Products.bulkWrite(bulkProductsUpdate);
+        await Products.bulkWrite(bulkProductsUpdate, { session });
 
         //accumulates volumeWon of company and creates a list of products it has won
-        databaseProducts = await Products.find();
-        databaseCompanies = await Companies.find();
+        databaseProducts = await Products.find().session(session);
+        databaseCompanies = await Companies.find().session(session);
         const bulkCompaniesUpdate = [];
         for (let company of databaseCompanies) {
           let volumeWon = company.volumeWon;
@@ -341,10 +345,10 @@ export const estimateWinner = async (req, res) => {
             },
           });
         }
-        await Companies.bulkWrite(bulkCompaniesUpdate);
+        await Companies.bulkWrite(bulkCompaniesUpdate, { session });
 
         //finds companies that didnt bought enough volume and picks one with the highest missing volume at random
-        databaseCompanies = await Companies.find();
+        databaseCompanies = await Companies.find().session(session);
         belowCompanies = databaseCompanies.filter(
           (company) =>
             new BigNumber(company.minVolume).minus(
@@ -385,12 +389,12 @@ export const estimateWinner = async (req, res) => {
         for (let company of databaseCompanies) {
           if (excludedOffer && company.nip === excludedOffer.nip) {
             company.status = 'excluded';
-            await company.save();
+            await company.save({ session });
           }
         }
 
         // removes the offers of company with the highest minVolume-volumeWon value
-        databaseOffers = await Offers.find();
+        databaseOffers = await Offers.find().session(session);
         if (excludedOffer) {
           databaseOffers.forEach((offer) => {
             if (offer.nip === excludedOffer.nip && offer.bid > 0) {
@@ -410,7 +414,8 @@ export const estimateWinner = async (req, res) => {
               $set: {
                 bid: 0,
               },
-            }
+            },
+            { session }
           );
 
           //clears the bid assigned to all product
@@ -422,7 +427,8 @@ export const estimateWinner = async (req, res) => {
                 maxOfferBid: 0,
                 finalPriceTotal: 0,
               },
-            }
+            },
+            { session }
           );
 
           //clears the volume and products list assigned to all companies
@@ -433,7 +439,8 @@ export const estimateWinner = async (req, res) => {
                 volumeWon: 0,
                 productsWon: [],
               },
-            }
+            },
+            { session }
           );
         }
         logToFile(
@@ -446,14 +453,30 @@ export const estimateWinner = async (req, res) => {
       console.log('estimating finished');
 
       status.winners = true;
-      await status.save();
+      await status.save({ session });
+      await session.commitTransaction();
+      session.endSession();
+      transactionFinished = true;
 
       res.status(200).json({ message: 'OK' });
     } else {
       res.status(400).json({ message: 'Winners already estimated' });
     }
   } catch (err) {
-    res.status(500).json({ message: err });
+    if (!transactionFinished) {
+      await session.abortTransaction();
+      session.endSession();
+      console.log('Transaction failed');
+
+      const outputFiles = fs.readdirSync(
+        path.join(__dirname, '../files/output/')
+      );
+      if (outputFiles.includes('logger.txt')) {
+        fs.unlinkSync(path.join(__dirname, '../files/output/logger.txt'));
+      }
+    }
+
+    res.status(500).json({ message: err.message });
     console.log(err);
   }
 };

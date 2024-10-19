@@ -15,9 +15,7 @@ export const importStatusRequest = () => {
   return (dispatch) => {
     fetch(`${API_URL}/status`, { method: 'GET' })
       .then((res) => {
-        if (res.status === 200) {
-          return res.json();
-        }
+        return res.json();
       })
       .then((res) => {
         dispatch(importStatus(res));
@@ -34,10 +32,7 @@ const initialState = {};
 export default function reducer(statePart = initialState, action = {}) {
   switch (action.type) {
     case IMPORT_STATUS:
-      return {
-        ...statePart,
-        ...action.payload,
-      };
+      return { ...statePart, status: action.payload };
     default:
       return statePart;
   }

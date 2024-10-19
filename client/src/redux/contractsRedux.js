@@ -6,6 +6,8 @@ import { startRequest, endRequest } from './requestRedux';
 export const getOffers = ({ contractsRedux }) => contractsRedux.offers;
 export const getCompanies = ({ contractsRedux }) => contractsRedux.companies;
 export const getContracts = ({ contractsRedux }) => contractsRedux.contracts;
+export const getEstimationResult = ({ contractsRedux }) =>
+  contractsRedux.result;
 
 /* ACTIONS */
 const createActionName = (actionName) => `app/offers/${actionName}`;
@@ -18,6 +20,9 @@ export const LOAD_CONTRACTS_MESSAGE = createActionName(
   'LOAD_CONTRACTS_MESSAGE'
 );
 export const DELETE_DATA = createActionName('DELETE_DATA');
+export const LOAD_ESTIMATION_RESULT = createActionName(
+  'LOAD_ESTIMATION_RESULT'
+);
 
 /* ACTION CREATORS */
 export const loadOffers = (payload) => ({ payload, type: LOAD_OFFERS });
@@ -36,6 +41,10 @@ export const loadContractsMessage = (payload) => ({
 export const deleteAllContractsData = (payload) => ({
   payload,
   type: DELETE_DATA,
+});
+export const loadEstimationResult = (payload) => ({
+  payload,
+  type: LOAD_ESTIMATION_RESULT,
 });
 
 /* THUNKS */
@@ -112,11 +121,10 @@ export const estimateWinnerRequest = () => {
     dispatch(startRequest({ name: 'OFFERS_REQUEST' }));
     await fetch(`${API_URL}/contracts/estimate`, { method: 'GET' })
       .then((res) => {
-        // if (res.status === 200) {
         return res.json();
-        // }
       })
       .then((res) => {
+        dispatch(loadEstimationResult(res));
         dispatch(importStatusRequest());
         dispatch(endRequest({ name: 'OFFERS_REQUEST' }));
       });
@@ -169,6 +177,7 @@ const initialState = {
   offers: {},
   companies: {},
   contracts: {},
+  result: {},
 };
 
 /* REDUCER */
@@ -183,6 +192,8 @@ export default function reducer(statePart = initialState, action = {}) {
       return { ...statePart, contracts: action.payload };
     case LOAD_CONTRACTS_MESSAGE:
       return { ...statePart, contracts: action.payload };
+    case LOAD_ESTIMATION_RESULT:
+      return { ...statePart, result: action.payload };
     case DELETE_DATA:
       return {
         ...statePart,

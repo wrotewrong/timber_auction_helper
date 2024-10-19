@@ -8,7 +8,7 @@ export const getStatus = async (req, res) => {
       await newStatus.save();
       status = await Status.findOne();
     }
-    res.status(200).json({ message: 'OK', status: status });
+    res.status(200).json({ message: 'OK', winners: status.winners });
   } catch (err) {
     res.status(500).json({ message: err.message });
     console.log(err.message);

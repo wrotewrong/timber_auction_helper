@@ -4,6 +4,7 @@ import {
   getOffers,
   getCompanies,
   estimateWinnerRequest,
+  getEstimationResult,
 } from '../../../redux/contractsRedux';
 import { useDispatch } from 'react-redux';
 import { getStatus } from '../../../redux/statusRedux';
@@ -18,6 +19,7 @@ export const Offers = () => {
   const companies = useSelector(getCompanies);
   const catalog = useSelector(getCatalog);
   const status = useSelector(getStatus);
+  const estimationResult = useSelector(getEstimationResult);
   const dispatch = useDispatch();
   const request = useSelector((state) => getRequest(state, 'OFFERS_REQUEST'));
 
@@ -96,6 +98,15 @@ export const Offers = () => {
                     buttonName={'podsumowanie'}
                   ></FileDownloadButton>
                 </>
+              ) : null}
+              {estimationResult?.message !== 'OK' &&
+              estimationResult?.message !== 'Winners already estimated' &&
+              estimationResult?.message !== undefined ? (
+                <div>
+                  <p className='mt-0 fw-bold text-danger'>
+                    wystąpił błąd: ponownie rozstrzygnij submisję
+                  </p>
+                </div>
               ) : null}
             </div>
           </div>
