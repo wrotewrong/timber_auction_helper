@@ -46,6 +46,8 @@ const createDoc = (docType, inputFileName, inputData) => {
       osobaPrawna: inputData.buyer.isLegalPerson,
       spolkaCywilna: inputData.buyer.isPartnership,
       podatnikVat: inputData.buyer.vat,
+      wersjaPapierowa: inputData.buyer.paperForm,
+      wersjaElektroniczna: inputData.buyer.electronicForm,
       dzieńRozpoczęcia: inputData.dates.submissionStart,
       dzieńZakończenia: inputData.dates.submissionEnd,
       ilośćCałkowita: bigNumberFormat(inputData.timber.totalVolume),

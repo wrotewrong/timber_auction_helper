@@ -23,6 +23,8 @@ const companiesSchema = new mongoose.Schema({
   productsWon: [{ type: String, required: true }],
   status: { type: String, default: 'active', required: true },
   vat: { type: String, required: true },
+  paperForm: { type: String, required: false },
+  electronicForm: { type: String, required: false },
 });
 
 export default mongoose.model('Company', companiesSchema);

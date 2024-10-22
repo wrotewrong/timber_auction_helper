@@ -76,6 +76,8 @@ export const importCompanies = async (req, res) => {
               productsWon: company.productsWon,
               status: company.status,
               vat: company.vat,
+              paperForm: company.paperForm,
+              electronicForm: company.electronicForm,
             },
           },
         };
@@ -688,6 +690,8 @@ export const addContracts = async (req, res) => {
               isNaturalPerson: company.isNaturalPerson ? true : false,
               isPartnership: company.isPartnership ? true : false,
               vat: company.vat,
+              paperForm: company.paperForm ? true : false,
+              electronicForm: company.electronicForm ? true : false,
             },
             timber: {
               list: [...company.productsWon],

@@ -6,7 +6,7 @@ const productsSchema = new mongoose.Schema({
   woodNumber: { type: String, required: true },
   species: { type: String, required: true },
   length: { type: Number, required: true },
-  diameter: { type: Number, required: true },
+  diameter: { type: String, required: true },
   volume: { type: Number, required: true },
   class: { type: String, required: true },
   startingPriceSingle: { type: Number, required: true },

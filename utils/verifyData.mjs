@@ -10,8 +10,8 @@ export const verifyData = (dataType, data) => {
         throw new Error('Length must be a number');
       }
 
-      if (!product.diameter.includes('.')) {
-        throw new Error('Diameter must be a number');
+      if (product.diameter.includes('.')) {
+        throw new Error('Diameter must not be a number');
       }
 
       if (productNumber.includes(product.productNumber)) {
