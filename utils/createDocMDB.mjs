@@ -6,6 +6,7 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import bigNumberFormat from '../utils/bigNumberFormat.mjs';
 import speciesToGerman from './speciesToGerman.mjs';
+import summariseByUnit from './summariseByUnit/summariseByUnit.mjs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -87,6 +88,7 @@ const createDoc = (docType, inputFileName, inputData) => {
     doc.render({
       contractNumber: inputData.number,
       name: inputData.buyer.name,
+      summaryByUnit: summariseByUnit(plainProducts),
       boughtProducts: plainProducts.map((product) => {
         product.generatedNumber = `${plainProducts.indexOf(product) + 1}.`;
         for (let property in product) {

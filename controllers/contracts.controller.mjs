@@ -284,7 +284,9 @@ export const estimateWinner = async (req, res) => {
         for (let product of databaseProducts) {
           const productOffers = databaseOffers.filter(
             (offer) =>
-              product.productNumber === offer.productNumber && offer.bid > 0
+              product.productNumber === offer.productNumber &&
+              offer.bid > 0 &&
+              offer.bid > product.startingPriceSingle
           );
 
           if (productOffers.length) {
