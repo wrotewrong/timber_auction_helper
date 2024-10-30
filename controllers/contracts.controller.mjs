@@ -247,7 +247,7 @@ export const getOffers = async (req, res) => {
   }
 };
 
-//estimateWinner method - eliminate companies offers based on the value: minVolume-volumeWon
+// estimateWinner method - eliminate companies offers based on the value: minVolume-volumeWon
 export const estimateWinner = async (req, res) => {
   const session = await mongoose.startSession();
   let transactionFinished = false;
@@ -513,7 +513,9 @@ export const estimateWinner = async (req, res) => {
 //         for (let product of databaseProducts) {
 //           const productOffers = databaseOffers.filter(
 //             (offer) =>
-//               product.productNumber === offer.productNumber && offer.bid > 0
+//               product.productNumber === offer.productNumber &&
+//               offer.bid > 0 &&
+//               offer.bid > product.startingPriceSingle
 //           );
 
 //           if (productOffers.length) {
@@ -554,8 +556,9 @@ export const estimateWinner = async (req, res) => {
 //         //finds companies that didnt bought enough volume and picks one with the highest missing volume at random
 //         belowCompanies = databaseCompanies.filter(
 //           (company) =>
-//             company.minVolume - company.volumeWon > 0 &&
-//             company.status === 'active'
+//             new BigNumber(company.minVolume).minus(
+//               new BigNumber(company.volumeWon)
+//             ) > 0 && company.status === 'active'
 //         );
 
 //         belowCompanies.map((company) => {
