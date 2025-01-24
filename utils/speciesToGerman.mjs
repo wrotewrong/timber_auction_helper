@@ -1,23 +1,26 @@
 const speciesToGerman = (name) => {
-  const nameUpperCase = name.toUpperCase();
+  const trimName = name.trim()
+  const nameUpperCase = trimName.toUpperCase();
   if (nameUpperCase === 'DB') {
-    return `${name} - Eiche`;
+    return `${trimName} - Eiche`;
   } else if (nameUpperCase === 'BK') {
-    return `${name} - Buche`;
+    return `${trimName} - Buche`;
   } else if (nameUpperCase === 'MD') {
-    return `${name} - Lärche`;
+    return `${trimName} - Lärche`;
   } else if (nameUpperCase === 'OL') {
-    return `${name} - Erle`;
+    return `${trimName} - Erle`;
   } else if (nameUpperCase === 'SO') {
-    return `${name} - Kiefern`;
+    return `${trimName} - Kiefern`;
   } else if (nameUpperCase === 'SW') {
-    return `${name} - Fichten`;
+    return `${trimName} - Fichten`;
   } else if (nameUpperCase === 'JS') {
-    return `${name} - Eschen`;
+    return `${trimName} - Eschen`;
   } else if (nameUpperCase === 'JW') {
-    return `${name} - Berg-Ahorn`;
+    return `${trimName} - Berg-Ahorn`;
   } else if (nameUpperCase === 'DBCZ') {
-    return `${name} - Roteiche`;
+    return `${trimName} - Roteiche`;
+  } else {
+    return trimName
   }
 };
 
